@@ -9,7 +9,7 @@ from django.urls import path, include  # add this
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name="index.html")),
+    path('', TemplateView.as_view(template_name="ui-notifications.html")),
     path('admin/', admin.site.urls),
     path("", include("authentication.urls")),  # add this
     path('accounts/', include("allauth.urls")),
