@@ -9,9 +9,13 @@ This project is in development
 -create a dashboard
 -google drive link
 
-# Set Up and activate Virtual Environment
+# Set Up Virtual Environment
 ```
 conda create --name client-portal python=3.8
+```
+
+# Activate Virtual Environment
+```
 activate client-portal
 ```
 
