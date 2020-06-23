@@ -8,9 +8,6 @@ def dash(request):
 
     boardData = response.json()
 
-    #import pdb
-    #pdb.set_trace()
-
     return render(request, 'dash.html', {'boardData':boardData})
 
 def status(request):
