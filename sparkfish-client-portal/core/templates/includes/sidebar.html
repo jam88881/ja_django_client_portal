@@ -3,11 +3,13 @@
     <div class="sidebar">
       <div class="sidebar-wrapper">
         
+        {% if not user.is_authenticated %}
         <div class="logo">
           <a target="_blank" href="accounts/login.html" class="simple-text">
             LOGIN
           </a>
         </div>
+        {% endif %}
 
         {% if user.is_authenticated %}
         <ul class="nav">

@@ -11,6 +11,7 @@ from . import views
 
 urlpatterns = [
     path('', views.dash),
+    path('status-reports.html', views.status),
     path('admin/', admin.site.urls),
     path("", include("authentication.urls")),  
     path("", include("app.urls")), 
