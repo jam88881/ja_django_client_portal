@@ -474,20 +474,16 @@
 {% block content %}
 
 <div class="row">
-  <div class="col-md-12">
-    <p class="mb-4 pb-2">Client Budget</p>
-  </div>
-  <div class="col-xl-10 pb-5">
-    <input class="checkbox-budget" type="radio" name="budget" id="budget-1" checked>
-
-    {% for each in dateData%}
-    <input class="checkbox-budget" type="radio" name="budget" id="budget-4">
-    <label class="for-checkbox-budget" for="budget-4">
-      <span>{{ each.week }}</span>
-    </label>
-    {% endfor %}
-
-    <!--<label class="for-checkbox-budget" for="budget-1">
+  <div class="card card-profile">
+    <div class="card-body">
+      <div class="col-xl-10 pb-5">
+        {% for each in statusData%}
+        <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" checked>
+        <label class="for-checkbox-budget" for="status-{{ each.idx }}">
+          <span>{{ each.week }}</span>
+        </label>
+        {% endfor %}
+        <!--<label class="for-checkbox-budget" for="budget-1">
       <span>June 16-22</span>
     </label>
     <input class="checkbox-budget" type="radio" name="budget" id="budget-2">
@@ -502,64 +498,61 @@
     <label class="for-checkbox-budget" for="budget-4">
       <span>May 26-June 1</span>
     </label>-->
-    <a href="status-reports.html"> Past </a>
-  </div>
-  <div class="card card-profile">
-    <div class="card-body">
-      <h2>Here is the latest Status Report</h2>
-      <ul>
-        <li>we did this</li>
-        <li>we did that</li>
-        <li>we got something done</li>
-      </ul>
-      <p><b>Percentage of authorized hours (x) for Month Year to date: (hours/x)%</b></p>
-      <p>If you have any questions or concerns about anything in this status report, please let us know.</p>
-      Regards,<br>
-      Sparkfish Team
+        <a href="status-reports.html"> Past </a>
+      </div>
+      {% for each in statusData%}
+      <div id="statusReport-{{each.idx}}" style="display:none" >
+        <h2>{{each.reportHeader}}</h2>
+        {{ each.report |safe }}
+        
+        
+      </div>
+      {% endfor %}
     </div>
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-      <div class="card card-profile">
-          <div class="card-body">
-              <h2>Logged hours</h2>
+    <div class="card card-profile">
+      <div class="card-body">
+        <h2>Logged hours</h2>
 
-              <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search by task.." title="Type in a task name">
-              
-              <table id="myTable">
-                <tr class="header">
-                  <th style="width:80%;">Tasks</th>
-                  <th style="width:80%;">Hours</th>
-                </tr>
-                <tr>
-                  <td>Build the UI</td>
-                  <td>10.25</td>
-                </tr>
-                <tr>
-                  <td>Develop API</td>
-                  <td>20.55</td>
-                </tr>
-                <tr>
-                  <td>Mockups</td>
-                  <td>15.20</td>
-                </tr>
-                <tr>
-                  <td>Project management and planning</td>
-                  <td>10.25</td>
-                </tr>
-                <tr>
-                  <td>Project Setup</td>
-                  <td>20.55</td>
-                </tr>
-              </table>
-          </div>
+        <input type="text" id="myInput" onkeyup="search()" placeholder="Search by task.."
+          title="Type in a task name">
+
+        <table id="myTable">
+          <tr class="header">
+            <th style="width:80%;">Tasks</th>
+            <th style="width:80%;">Hours</th>
+          </tr>
+          <tr>
+            <td>Build the UI</td>
+            <td>10.25</td>
+          </tr>
+          <tr>
+            <td>Develop API</td>
+            <td>20.55</td>
+          </tr>
+          <tr>
+            <td>Mockups</td>
+            <td>15.20</td>
+          </tr>
+          <tr>
+            <td>Project management and planning</td>
+            <td>10.25</td>
+          </tr>
+          <tr>
+            <td>Project Setup</td>
+            <td>20.55</td>
+          </tr>
+        </table>
       </div>
+    </div>
   </div>
 </div>
 
 <script>
-  function myFunction() {
+  function search() {
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("myInput");
     filter = input.value.toUpperCase();
@@ -577,6 +570,34 @@
       }
     }
   }
+
+  function showStatus() {
+
+    if (document.getElementById('status-1').checked) {
+      document.getElementById('statusReport-1').style.display = 'block';
+      document.getElementById('statusReport-2').style.display = 'none';
+      document.getElementById('statusReport-3').style.display = 'none';
+      document.getElementById('statusReport-4').style.display = 'none';
+    }
+    else if (document.getElementById('status-2').checked) {
+      document.getElementById('statusReport-1').style.display = 'none';
+      document.getElementById('statusReport-2').style.display = 'block';
+      document.getElementById('statusReport-3').style.display = 'none';
+      document.getElementById('statusReport-4').style.display = 'none';
+    }
+    else if (document.getElementById('status-3').checked) {
+      document.getElementById('statusReport-1').style.display = 'none';
+      document.getElementById('statusReport-2').style.display = 'none';
+      document.getElementById('statusReport-3').style.display = 'block';
+      document.getElementById('statusReport-4').style.display = 'none';
+    } else if (document.getElementById('status-4').checked) {
+      document.getElementById('statusReport-1').style.display = 'none';
+      document.getElementById('statusReport-2').style.display = 'none';
+      document.getElementById('statusReport-3').style.display = 'none';
+      document.getElementById('statusReport-4').style.display = 'block';
+    }
+  }
+
 </script>
 
 {% endblock content %}
