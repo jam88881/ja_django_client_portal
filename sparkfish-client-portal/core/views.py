@@ -1,14 +1,20 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from os import path
+from .settings import TRELLO_API_KEY
+from .settings import TRELLO_API_TOKEN
+import os
+import json
 import requests
-from datetime import date, timedelta
+import yaml
+
 
 def dash(request):
-    response = requests.get('')
+    response = requests.get('https://api.trello.com/1/boards/B5t1aUPH/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN)
 
-    boardData = response.json()
+    boradData = response.json()
 
-    return render(request, 'dash.html', {'boardData':boardData})
+    return render(request, 'dash.html', {'boradData':boradData})
 
 def status(request):
     statusData = [

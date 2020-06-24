@@ -13,6 +13,9 @@ This project is in development
 ```
 conda create --name client-portal python=3.8
 ```
+# Secrets
+Obtain the file config.yml from a team member and place it in the env folder
+
 
 # Activate Virtual Environment
 ```

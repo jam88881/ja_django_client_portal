@@ -478,26 +478,16 @@
     <div class="card-body">
       <div class="col-xl-10 pb-5">
         {% for each in statusData%}
+        {% if each.idx == '1' %}
         <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" checked>
+        {% else %}
+        <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" >
+        {% endif %}
         <label class="for-checkbox-budget" for="status-{{ each.idx }}">
           <span>{{ each.week }}</span>
         </label>
+        
         {% endfor %}
-        <!--<label class="for-checkbox-budget" for="budget-1">
-      <span>June 16-22</span>
-    </label>
-    <input class="checkbox-budget" type="radio" name="budget" id="budget-2">
-    <label class="for-checkbox-budget" for="budget-2">
-      <span>June 9-15</span>
-    </label>
-    <input class="checkbox-budget" type="radio" name="budget" id="budget-3">
-    <label class="for-checkbox-budget" for="budget-3">
-      <span>June 2-8</span>
-    </label>
-    <input class="checkbox-budget" type="radio" name="budget" id="budget-4">
-    <label class="for-checkbox-budget" for="budget-4">
-      <span>May 26-June 1</span>
-    </label>-->
         <a href="status-reports.html"> Past </a>
       </div>
       {% for each in statusData%}
@@ -597,6 +587,8 @@
       document.getElementById('statusReport-4').style.display = 'block';
     }
   }
+
+  showStatus();
 
 </script>
 

@@ -8,6 +8,10 @@ import os
 from decouple import config
 from unipath import Path
 import dj_database_url
+from os import path
+import json
+import requests
+import yaml
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -152,3 +156,15 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+
+#get the Trello API Key and Token
+config_path = BASE_DIR + "\\env\\config.yml"
+with open(config_path) as stream:
+    try:
+        settings = yaml.safe_load(stream)
+        TRELLO_API_KEY = settings['TRELLO_API_KEY']
+        TRELLO_API_TOKEN = settings['TRELLO_API_TOKEN']
+    except yaml.YAMLError as exc:
+        print(exc)
+
