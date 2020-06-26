@@ -477,6 +477,7 @@
   <div class="card card-profile">
     <div class="card-body">
       <div class="col-xl-10 pb-5">
+        <h1>Sparkfish - General Administrative</h1>
         {% for each in statusData%}
         {% if each.idx == '1' %}
         <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" checked>
@@ -493,8 +494,9 @@
       {% for each in statusData%}
       <div id="statusReport-{{each.idx}}" style="display:none" >
         <h2>{{each.reportHeader}}</h2>
-        {{ each.report |safe }}
-        
+          {%for rep in each.report%}
+            Time spent on {{rep.id}} - {{rep.name}}:    <b>{{rep.hours}} hours</b><br>
+          {% endfor %}
         
       </div>
       {% endfor %}
@@ -517,7 +519,7 @@
           </tr>
           {% for each in loggedHours%}
           <tr>
-            <td>{{each.Name}}</td>
+            <td>{{each.id}} - {{each.name}}</td>
             <td>{{each.hours}}</td>
           </tr>
           {% endfor %}

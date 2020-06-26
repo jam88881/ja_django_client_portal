@@ -165,6 +165,7 @@ with open(config_path) as stream:
         settings = yaml.safe_load(stream)
         TRELLO_API_KEY = settings['TRELLO_API_KEY']
         TRELLO_API_TOKEN = settings['TRELLO_API_TOKEN']
+        TMETRIC_TOKEN = settings['TMETRIC_TOKEN']
     except yaml.YAMLError as exc:
         print(exc)
 
