@@ -515,26 +515,13 @@
             <th style="width:80%;">Tasks</th>
             <th style="width:80%;">Hours</th>
           </tr>
+          {% for each in loggedHours%}
           <tr>
-            <td>Build the UI</td>
-            <td>10.25</td>
+            <td>{{each.Name}}</td>
+            <td>{{each.hours}}</td>
           </tr>
-          <tr>
-            <td>Develop API</td>
-            <td>20.55</td>
-          </tr>
-          <tr>
-            <td>Mockups</td>
-            <td>15.20</td>
-          </tr>
-          <tr>
-            <td>Project management and planning</td>
-            <td>10.25</td>
-          </tr>
-          <tr>
-            <td>Project Setup</td>
-            <td>20.55</td>
-          </tr>
+          {% endfor %}
+          
         </table>
       </div>
     </div>
