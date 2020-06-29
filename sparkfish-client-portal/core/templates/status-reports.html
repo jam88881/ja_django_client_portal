@@ -35,6 +35,7 @@
 	font-size: 17px;*/
     line-height: 30px;
     color: var(--white);
+    font-style:italic;
     letter-spacing: 1px;
     /*font-weight: 500;*/
     -webkit-transition: all 300ms linear;
@@ -478,7 +479,7 @@
     <div class="card-body">
       <div class="col-xl-10 pb-5">
         <h1>Sparkfish - General Administrative</h1>
-        {% for each in statusData%}
+        {% for each in status_data%}
         {% if each.idx == '1' %}
         <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" checked>
         {% else %}
@@ -489,11 +490,10 @@
         </label>
         
         {% endfor %}
-        <a href="status-reports.html"> Past </a>
       </div>
-      {% for each in statusData%}
+      {% for each in status_data%}
       <div id="statusReport-{{each.idx}}" style="display:none" >
-        <h2>{{each.reportHeader}}</h2>
+        <h2>{{each.report_header}}</h2>
           {%for rep in each.report%}
             Time spent on {{rep.id}} - {{rep.name}}:    <b>{{rep.hours}} hours</b><br>
           {% endfor %}
@@ -517,7 +517,7 @@
             <th style="width:80%;">Tasks</th>
             <th style="width:80%;">Hours</th>
           </tr>
-          {% for each in loggedHours%}
+          {% for each in logged_hours%}
           <tr>
             <td>{{each.id}} - {{each.name}}</td>
             <td>{{each.hours}}</td>

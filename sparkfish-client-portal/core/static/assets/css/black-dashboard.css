@@ -13086,10 +13086,10 @@ fieldset[disabled] .navbar .navbar-nav>a.btn.active {
 
 .btn-primary {
   background: #5f72e4;
-  background-image: -webkit-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4);
-  background-image: -o-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4);
-  background-image: -moz-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4);
-  background-image: linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4);
+  background-image: -webkit-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2);
+  background-image: -o-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2);
+  background-image: -moz-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2);
+  background-image: linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2);
   background-size: 210% 210%;
   background-position: top right;
   background-color: #5f72e4;
@@ -13111,11 +13111,11 @@ fieldset[disabled] .navbar .navbar-nav>a.btn.active {
 .btn-primary:active:hover,
 .btn-primary.active:focus,
 .btn-primary.active:hover {
-  background-color: #ba54f5 !important;
-  background-image: linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4) !important;
-  background-image: -webkit-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4) !important;
-  background-image: -o-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4) !important;
-  background-image: -moz-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4) !important;
+  background-color: #696DE2 !important;
+  background-image: linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2) !important;
+  background-image: -webkit-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2) !important;
+  background-image: -o-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2) !important;
+  background-image: -moz-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2) !important;
   color: #ffffff;
   box-shadow: none;
 }
@@ -13187,11 +13187,11 @@ fieldset[disabled] .btn-primary.active {
 .btn-primary.btn-simple.active:not(:disabled):not(.disabled):active {
   color: #ffffff;
   border-color: #5f72e4;
-  background-image: linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4) !important;
-  background-image: -webkit-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4) !important;
-  background-image: -o-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4) !important;
-  background-image: -moz-linear-gradient(to bottom left, #5f72e4, #ba54f5, #5f72e4) !important;
-  background-color: #ba54f5 !important;
+  background-image: linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2) !important;
+  background-image: -webkit-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2) !important;
+  background-image: -o-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2) !important;
+  background-image: -moz-linear-gradient(to bottom left, #696DE2, #696DE2, #696DE2) !important;
+  background-color: #696DE2 !important;
   box-shadow: none;
 }
 
@@ -13854,13 +13854,13 @@ fieldset[disabled] .btn-neutral.active {
 .show>.btn-neutral.dropdown-toggle:focus,
 .show>.btn-neutral.dropdown-toggle:hover {
   background-color: #ffffff;
-  color: #ba54f5;
+  color: #696DE2;
   box-shadow: none;
 }
 
 .btn-neutral:hover,
 .btn-neutral:focus {
-  color: #ba54f5;
+  color: #696DE2;
 }
 
 .btn-neutral:hover:not(.nav-link),
@@ -16496,7 +16496,7 @@ h6 {
 }
 
 a {
-  color: #ba54f5;
+  color: #696DE2;
   font-weight: 300;
 }
 
@@ -17337,11 +17337,11 @@ table.tablesorter thead tr .headerSortDown {
 
 .sidebar,
 .off-canvas-sidebar {
-  background: #ba54f5;
-  background: -webkit-linear-gradient(0deg, #ba54f5 0%, #5f72e4 100%);
-  background: -o-linear-gradient(0deg, #ba54f5 0%, #5f72e4 100%);
-  background: -moz-linear-gradient(0deg, #ba54f5 0%, #5f72e4 100%);
-  background: linear-gradient(0deg, #ba54f5 0%, #5f72e4 100%);
+  background: #696DE2;
+  background: -webkit-linear-gradient(0deg, #696DE2 0%, #696DE2 100%);
+  background: -o-linear-gradient(0deg, #696DE2 0%, #696DE2 100%);
+  background: -moz-linear-gradient(0deg, #696DE2 0%, #696DE2 100%);
+  background: linear-gradient(0deg, #696DE2 0%, #696DE2 100%);
   height: calc(100vh - 90px);
   width: 230px;
   position: fixed;

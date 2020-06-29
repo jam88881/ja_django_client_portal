@@ -1,46 +1,46 @@
+import datetime as dt
+import json
+import os
+import requests
+import yaml
+from datetime import timedelta
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from os import path
 from .settings import TRELLO_API_KEY
 from .settings import TRELLO_API_TOKEN
 from .settings import TMETRIC_TOKEN
-import os
-import json
-import requests
-import yaml
-import datetime as dt
-from datetime import timedelta
-import pdb
 
 def dash(request):
     response = requests.get('https://api.trello.com/1/boards/B5t1aUPH/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN)
 
-    boardData = []
+    board_data = []
     for i, elem in enumerate(response.json()):
-        item = {"idShort" : elem['idShort'], "name" : elem['name']}
-        boardData.append(item)
+        item = {"id" : elem['idShort'], "name" : elem['name']}
+        board_data.append(item)
         
-    return render(request, 'dash.html', {'boardData':boardData})
+    return render(request, 'dash.html', {'board_data':board_data})
 
 def status(request):
-    statusData = []
+    status_data = []
 
     response = requests.get('https://api.trello.com/1/boards/B5t1aUPH/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN)
 
-    dateList = []
-    dateListShift7 = []
-    dNow = dt.datetime.now()
-    td28Days = dt.timedelta(days = 28)
-    dAMonthAgo = dNow - td28Days
+    date_list = []
+    date_list_shift_7 = []
+    now = dt.datetime.now()
+    time_delta_28_days = dt.timedelta(days = 28)
+    a_month_ago = now - time_delta_28_days
 
-    for i in lastFourSundays(dAMonthAgo.year, dAMonthAgo.month, dAMonthAgo.day):
-        dateList.append(i)
+    for i in last_four_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day):
+        date_list.append(i)
     
-    for i in lastFourSundays(dAMonthAgo.year, dAMonthAgo.month, dAMonthAgo.day,7):
-        dateListShift7.append(i)
+    for i in last_four_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day,7):
+        date_list_shift_7.append(i)
 
-    dateList.reverse()
-    dateListShift7.reverse()
+    date_list.reverse()
+    date_list_shift_7.reverse()
 
     for i in range(1,5):
 
@@ -49,22 +49,22 @@ def status(request):
         elif i == 2:
             header = "Here is last week's Status Report"
         else:
-            header = "Status report " + str(dateListShift7[i-1])
-        TmetricAPIResponse = TmetricAPICall(request, response, dateList[i-1], dateListShift7[i-1])
-        statusDataItem = {
+            header = "Status report " + str(date_list_shift_7[i-1])
+        tmetric_entries = get_tmetric_entries(request, response, date_list[i-1], date_list_shift_7[i-1])
+        status_data_item = {
             "idx":str(i),
-            "week": str(dateList[i-1]) + " to " + str(dateListShift7[i-1]),
-            "reportHeader":header,
-            "report" : TmetricAPIResponse
+            "week": str(date_list[i-1]) + " to " + str(date_list_shift_7[i-1]),
+            "report_header":header,
+            "report" : tmetric_entries
         }
-        statusData.append(statusDataItem)
+        status_data.append(status_data_item)
 
-    return render(request, 'status-reports.html', {'statusData':statusData, 'loggedHours':TmetricAPICall(request, response, dateList[0], dateListShift7[0]) })
+    return render(request, 'status-reports.html', {'status_data':status_data, 'logged_hours':get_tmetric_entries(request, response, date_list[0], date_list_shift_7[0]) })
 
 def dateDiff(date1, date2):
     return (date1-date2).total_seconds()
 
-def lastFourSundays(year, month, day, shift = 0):
+def last_four_sundays(year, month, day, shift = 0):
     d = dt.date(year, month, day)
     if shift != 0:
         d += timedelta(days = 7)
@@ -73,44 +73,44 @@ def lastFourSundays(year, month, day, shift = 0):
         yield d
         d += timedelta(days = 7)
 
-def TmetricAPICall(request, responseTrello, paramStartDate, paramEndDate):
-    trelloData = []
-    statusReportsData = []
-    finalStatusReportsData = []
+def get_tmetric_entries(request, trello_response, paramStartDate, paramEndDate):
+    trello_data = []
+    status_reports_data = []
+    final_status_report_data = []
     
-    for i, elem in enumerate(responseTrello.json()):
+    for i, elem in enumerate(trello_response.json()):
         item = {"shortLink" : elem['shortLink'], "name" : elem['name'], "idShort" : elem['idShort']}
-        trelloData.append(item)
+        trello_data.append(item)
 
-    tmetricURL = "https://app.tmetric.com/api/accounts/18538/timeentries/132870?timeRange.startTime=" + str(paramStartDate.year) + "-" + str(paramStartDate.month) + "-" + str(paramStartDate.day) + "T00:00:00Z&timeRange.endTime=" + str(paramEndDate.year) + "-" + str(paramEndDate.month) + "-" + str(paramEndDate.day) + "T23:59:59Z"
+    tmetric_url = "https://app.tmetric.com/api/accounts/18538/timeentries/132870?timeRange.startTime=" + str(paramStartDate.year) + "-" + str(paramStartDate.month) + "-" + str(paramStartDate.day) + "T00:00:00Z&timeRange.endTime=" + str(paramEndDate.year) + "-" + str(paramEndDate.month) + "-" + str(paramEndDate.day) + "T23:59:59Z"
     headers = { "Authorization" : TMETRIC_TOKEN,
                 "Content-Type" : "application/json"}
-    responseTmetric = requests.get(tmetricURL, headers=headers)
+    response_tmetric = requests.get(tmetric_url, headers=headers)
 
-    for i, elemTmetric in enumerate(responseTmetric.json()):
-        for j, elemTrello in enumerate(trelloData):
+    for i, elem_tmetric in enumerate(response_tmetric.json()):
+        for j, elem_trello in enumerate(trello_data):
             try:
-                if elemTrello['shortLink'] in elemTmetric['details']['projectTask']['relativeIssueUrl']:
-                    ed = elemTmetric['endTime']
-                    sd = elemTmetric['startTime']
-                    dEndDate = dt.datetime(int(ed[:4]),int(ed[5:7]),int(ed[8:10]),int(ed[11:13]),int(ed[14:16]),int(ed[17:19]))
-                    dStartDate = dt.datetime(int(sd[:4]),int(sd[5:7]),int(sd[8:10]),int(sd[11:13]),int(sd[14:16]),int(sd[17:19]))
-                    item = {"duration" : str(dateDiff(dEndDate,dStartDate)), "idShort" : elemTrello['idShort'], "name" : elemTmetric['details']['projectTask']['description']}
-                    statusReportsData.append(item)
+                if elem_trello['shortLink'] in elem_tmetric['details']['projectTask']['relativeIssueUrl']:
+                    end_time = elem_tmetric['endTime']
+                    start_time = elem_tmetric['startTime']
+                    end_date = dt.datetime(int(end_time[:4]),int(end_time[5:7]),int(end_time[8:10]),int(end_time[11:13]),int(end_time[14:16]),int(end_time[17:19]))
+                    start_date = dt.datetime(int(start_time[:4]),int(start_time[5:7]),int(start_time[8:10]),int(start_time[11:13]),int(start_time[14:16]),int(start_time[17:19]))
+                    item = {"duration" : str(dateDiff(end_date,start_date)), "idShort" : elem_trello['idShort'], "name" : elem_tmetric['details']['projectTask']['description']}
+                    status_reports_data.append(item)
             except:
                 pass
 
-    shortTaskList = []
-    for elem in statusReportsData:
-        if elem['idShort'] not in shortTaskList:
-            shortTaskList.append(elem['idShort'])
+    short_task_list = []
+    for elem in status_reports_data:
+        if elem['idShort'] not in short_task_list:
+            short_task_list.append(elem['idShort'])
 
-    for taskID in shortTaskList:
+    for task_id in short_task_list:
         sum = 0
-        for elem in statusReportsData:
-            if taskID == elem['idShort']:
+        for elem in status_reports_data:
+            if task_id == elem['idShort']:
                 sum = sum + float(elem['duration'])
-                taskName = elem['name']
-        finalStatusReportsData.append({"id":taskID, "name":taskName, "hours": str(round((sum/3600), 2)) })
+                task_name = elem['name']
+        final_status_report_data.append({"id":task_id, "name":task_name, "hours": str(round((sum/3600), 2)) })
 
-    return finalStatusReportsData
+    return final_status_report_data

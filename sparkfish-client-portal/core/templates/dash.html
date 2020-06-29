@@ -15,10 +15,10 @@
       <div class="card-header">
         <h4 class="card-title">Basic Call to Trello's API</h4>
       </div>
-      {% for each in boardData%}
+      {% for each in board_data%}
       <div class="card-body">
         <div class="alert alert-info">
-          <span>{{each.idShort}} - {{each.name}}</span>
+          <span>{{each.id}} - {{each.name}}</span>
         </div>
       </div>
       {% endfor %}
