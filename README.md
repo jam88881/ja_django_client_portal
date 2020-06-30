@@ -42,4 +42,8 @@ pip install django-allauth
 ```
 python manage.py runserver
 ```
-trigger azure
+
+#Azure
+```
+gunicorn --bind=0.0.0.0 --timeout 600 core.wsgi
+```
