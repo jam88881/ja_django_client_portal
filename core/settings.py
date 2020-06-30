@@ -169,13 +169,6 @@ SOCIALACCOUNT_PROVIDERS = {
 
 
 #get the Trello API Key and Token
-config_path = BASE_DIR + "\\env\\config.yml"
-with open(config_path) as stream:
-    try:
-        settings = yaml.safe_load(stream)
-        TRELLO_API_KEY = settings['TRELLO_API_KEY']
-        TRELLO_API_TOKEN = settings['TRELLO_API_TOKEN']
-        TMETRIC_TOKEN = settings['TMETRIC_TOKEN']
-    except yaml.YAMLError as exc:
-        print(exc)
-
+TRELLO_API_KEY = '4e15254bd0830e2b1f4e79d12bebf60d'
+TRELLO_API_TOKEN = '6d46576c490239c0e0ba711c703b4daee24243e3485ab393381ba649a1f11272'
+TMETRIC_TOKEN = 'Bearer 7ae182feb9c9ffa0a727d01584c62aced8829c72df528835d8ec68209887901a'
