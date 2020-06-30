@@ -42,3 +42,4 @@ pip install django-allauth
 ```
 python manage.py runserver
 ```
+trigger azure
