@@ -13,31 +13,32 @@
           <p>Dashboard</p>
         </a>
       </li>
-      <li>
+      <!--<li>
         <a href="/page-blank.html">
           <i class="tim-icons icon-bell-55"></i>
           <p>Notifications</p>
         </a>
-      </li>
+      </li>-->
       <li>
         <a href="/status-reports.html">
           <i class="tim-icons icon-paper"></i>
           <p>Status Reports</p>
         </a>
       </li>
-      <li>
+      <!--<li>
         <a href="/page-blank.html">
           <i class="tim-icons icon-credit-card"></i>
           <p>Payments</p>
         </a>
-      </li>
+      </li>-->
+      {% if user.is_superuser %}
       <li>
-        <a href="/page-blank.html">
+        <a href="/admin">
           <i class="tim-icons icon-settings-gear-63"></i>
           <p>Administration</p>
         </a>
       </li>
-
+      {% endif %}
       <li>
         <a href="https://drive.google.com/drive/">
           <i class="tim-icons icon-app"></i>
