@@ -128,7 +128,4 @@ def get_tmetric_entries(request, trello_response, paramStartDate, paramEndDate):
                 task_name = elem['name']
         final_status_report_data.append({"id":task_id, "name":task_name, "hours": str(round((sum/3600), 2)), "budget": str(get_project_budget(project_id)) })
 
-    import pdb
-    pdb.set_trace()
-
     return final_status_report_data
