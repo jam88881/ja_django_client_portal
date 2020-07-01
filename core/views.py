@@ -28,7 +28,8 @@ def dash(request):
 def status(request):
     status_data = []
 
-    response = requests.get('https://api.trello.com/1/boards/B5t1aUPH/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN)
+    trello_api_url = 'https://api.trello.com/1/boards/B5t1aUPH/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN
+    response = requests.get(trello_api_url)
 
     date_list = []
     date_list_shift_7 = []
@@ -60,9 +61,10 @@ def status(request):
             "report_header":header,
             "report" : tmetric_entries
         }
+
         status_data.append(status_data_item)
 
-    return render(request, 'status-reports.html', {'status_data':status_data, 'logged_hours':get_tmetric_entries(request, response, date_list[0], date_list_shift_7[0]) })
+    return render(request, 'status-reports.html', {'status_data':status_data, 'logged_hours': tmetric_entries })
 
 def dateDiff(date1, date2):
     return (date1-date2).total_seconds()
@@ -76,11 +78,20 @@ def last_four_sundays(year, month, day, shift = 0):
         yield d
         d += timedelta(days = 7)
 
+def get_project_budget(project_id):
+    budget_url = 'https://app.tmetric.com/api/accounts/18538/projects/' + str(project_id)
+    headers = { "Authorization" : TMETRIC_TOKEN,
+                "Content-Type" : "application/json"}
+    response = requests.get(budget_url, headers=headers)
+    
+    return response.json()['budgetSize']
+
 def get_tmetric_entries(request, trello_response, paramStartDate, paramEndDate):
     trello_data = []
     status_reports_data = []
     final_status_report_data = []
-    
+    project_id = ''
+
     for i, elem in enumerate(trello_response.json()):
         item = {"shortLink" : elem['shortLink'], "name" : elem['name'], "idShort" : elem['idShort']}
         trello_data.append(item)
@@ -100,9 +111,10 @@ def get_tmetric_entries(request, trello_response, paramStartDate, paramEndDate):
                     start_date = dt.datetime(int(start_time[:4]),int(start_time[5:7]),int(start_time[8:10]),int(start_time[11:13]),int(start_time[14:16]),int(start_time[17:19]))
                     item = {"duration" : str(dateDiff(end_date,start_date)), "idShort" : elem_trello['idShort'], "name" : elem_tmetric['details']['projectTask']['description']}
                     status_reports_data.append(item)
+                    project_id = elem_tmetric['details']['projectId']
             except:
                 pass
-
+        
     short_task_list = []
     for elem in status_reports_data:
         if elem['idShort'] not in short_task_list:
@@ -114,6 +126,9 @@ def get_tmetric_entries(request, trello_response, paramStartDate, paramEndDate):
             if task_id == elem['idShort']:
                 sum = sum + float(elem['duration'])
                 task_name = elem['name']
-        final_status_report_data.append({"id":task_id, "name":task_name, "hours": str(round((sum/3600), 2)) })
+        final_status_report_data.append({"id":task_id, "name":task_name, "hours": str(round((sum/3600), 2)), "budget": str(get_project_budget(project_id)) })
+
+    import pdb
+    pdb.set_trace()
 
     return final_status_report_data

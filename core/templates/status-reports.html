@@ -493,9 +493,9 @@
       </div>
       {% for each in status_data%}
       <div id="statusReport-{{each.idx}}" style="display:none" >
-        <h2>{{each.report_header}}</h2>
+        <h2>{{each.report_header}} </h2>
           {%for rep in each.report%}
-            Time spent on {{rep.id}} - {{rep.name}}:    <b>{{rep.hours}} hours</b><br>
+            Time spent on {{rep.id}} - {{rep.name}}:    <b>{{rep.hours}}</b> hours of budget: {{rep.budget}}<br>
           {% endfor %}
         
       </div>
