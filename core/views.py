@@ -7,19 +7,22 @@ from datetime import timedelta
 
 from django.http import HttpResponse
 from django.shortcuts import render
+
 from os import path
 from .settings import TRELLO_API_KEY
 from .settings import TRELLO_API_TOKEN
 from .settings import TMETRIC_TOKEN
 
 def dash(request):
-    response = requests.get('https://api.trello.com/1/boards/B5t1aUPH/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN)
-
     board_data = []
-    for i, elem in enumerate(response.json()):
-        item = {"id" : elem['idShort'], "name" : elem['name']}
-        board_data.append(item)
-        
+    for e in request.user.user_permissions.filter(content_type = 13): #13 is trelloaccess
+        trello_api_url = 'https://api.trello.com/1/boards/' + e.codename +'/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN
+        response = requests.get(trello_api_url)
+
+        for i, elem in enumerate(response.json()):
+            item = {"id" : elem['idShort'], "name" : elem['name']}
+            board_data.append(item)
+
     return render(request, 'dash.html', {'board_data':board_data})
 
 def status(request):
