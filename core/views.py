@@ -30,9 +30,6 @@ def status(request):
 
     board_name = str(e).split('|')[2].replace('_',' ').replace(' Access','')
 
-    import pdb
-    pdb.set_trace()
-
     status_data = []
     response = requests.get(trello_api_url)
 
