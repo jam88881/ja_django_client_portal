@@ -9,14 +9,13 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from os import path
-from .settings import TRELLO_API_KEY
-from .settings import TRELLO_API_TOKEN
-from .settings import TMETRIC_TOKEN
+from .settings import TRELLO_API_KEY, TRELLO_API_TOKEN, TMETRIC_TOKEN, TRELLO_API_TOKEN, TMETRIC_TOKEN
+
 
 def dash(request):
     board_data = []
     for e in request.user.user_permissions.filter(content_type = 13): #13 is trelloaccess
-        trello_api_url = 'https://api.trello.com/1/boards/' + e.codename +'/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN
+        trello_api_url = 'https://api.trello.com/1/boards/' + e.codename + '/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN
         response = requests.get(trello_api_url)
 
         for i, elem in enumerate(response.json()):
@@ -26,9 +25,15 @@ def dash(request):
     return render(request, 'dash.html', {'board_data':board_data})
 
 def status(request):
-    status_data = []
+    for e in request.user.user_permissions.filter(content_type = 13): #13 is trelloaccess
+        trello_api_url = 'https://api.trello.com/1/boards/' + e.codename + '/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN
 
-    trello_api_url = 'https://api.trello.com/1/boards/B5t1aUPH/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN
+    board_name = str(e).split('|')[2].replace('_',' ').replace(' Access','')
+
+    import pdb
+    pdb.set_trace()
+
+    status_data = []
     response = requests.get(trello_api_url)
 
     date_list = []
@@ -64,7 +69,7 @@ def status(request):
 
         status_data.append(status_data_item)
 
-    return render(request, 'status-reports.html', {'status_data':status_data, 'logged_hours': tmetric_entries })
+    return render(request, 'status-reports.html', {'status_data':status_data, 'board_name':board_name})
 
 def dateDiff(date1, date2):
     return (date1-date2).total_seconds()
@@ -83,10 +88,12 @@ def get_project_budget(project_id):
     headers = { "Authorization" : TMETRIC_TOKEN,
                 "Content-Type" : "application/json"}
     response = requests.get(budget_url, headers=headers)
-    
-    return response.json()['budgetSize']
+    try:
+        return response.json()['budgetSize']
+    except:
+        return 'No Budget'
 
-def get_tmetric_entries(request, trello_response, paramStartDate, paramEndDate):
+def get_tmetric_entries(request, trello_response, start_date, end_date):
     trello_data = []
     status_reports_data = []
     final_status_report_data = []
@@ -96,7 +103,7 @@ def get_tmetric_entries(request, trello_response, paramStartDate, paramEndDate):
         item = {"shortLink" : elem['shortLink'], "name" : elem['name'], "idShort" : elem['idShort']}
         trello_data.append(item)
 
-    tmetric_url = "https://app.tmetric.com/api/accounts/18538/timeentries/132870?timeRange.startTime=" + str(paramStartDate.year) + "-" + str(paramStartDate.month) + "-" + str(paramStartDate.day) + "T00:00:00Z&timeRange.endTime=" + str(paramEndDate.year) + "-" + str(paramEndDate.month) + "-" + str(paramEndDate.day) + "T23:59:59Z"
+    tmetric_url = "https://app.tmetric.com/api/accounts/18538/timeentries/132870?timeRange.startTime=" + str(start_date.year) + "-" + str(start_date.month) + "-" + str(start_date.day) + "T00:00:00Z&timeRange.endTime=" + str(end_date.year) + "-" + str(end_date.month) + "-" + str(end_date.day) + "T23:59:59Z"
     headers = { "Authorization" : TMETRIC_TOKEN,
                 "Content-Type" : "application/json"}
     response_tmetric = requests.get(tmetric_url, headers=headers)

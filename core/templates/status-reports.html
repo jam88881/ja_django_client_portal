@@ -478,7 +478,7 @@
   <div class="card card-profile">
     <div class="card-body">
       <div class="col-xl-10 pb-5">
-        <h1>Sparkfish - General Administrative</h1>
+        <h1>{{ board_name }}</h1>
         {% for each in status_data%}
         {% if each.idx == '1' %}
         <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" checked>
@@ -503,7 +503,7 @@
     </div>
   </div>
 </div>
-<div class="row">
+<!--<div class="row">
   <div class="col-md-12">
     <div class="card card-profile">
       <div class="card-body">
@@ -528,7 +528,7 @@
       </div>
     </div>
   </div>
-</div>
+</div>-->
 
 <script>
   function search() {
