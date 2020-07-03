@@ -95,41 +95,53 @@ def get_tmetric_entries(request, trello_response, start_date, end_date):
     status_reports_data = []
     final_status_report_data = []
     project_id = ''
+    headers = { "Authorization" : TMETRIC_TOKEN,"Content-Type" : "application/json"}
 
-    for i, elem in enumerate(trello_response.json()):
+    for elem in trello_response.json():
         item = {"shortLink" : elem['shortLink'], "name" : elem['name'], "idShort" : elem['idShort']}
         trello_data.append(item)
 
-    tmetric_url = "https://app.tmetric.com/api/accounts/18538/timeentries/132870?timeRange.startTime=" + str(start_date.year) + "-" + str(start_date.month) + "-" + str(start_date.day) + "T00:00:00Z&timeRange.endTime=" + str(end_date.year) + "-" + str(end_date.month) + "-" + str(end_date.day) + "T23:59:59Z"
-    headers = { "Authorization" : TMETRIC_TOKEN,
-                "Content-Type" : "application/json"}
-    response_tmetric = requests.get(tmetric_url, headers=headers)
+    headers = { "Authorization" : TMETRIC_TOKEN,"Content-Type" : "application/json"}
 
-    for i, elem_tmetric in enumerate(response_tmetric.json()):
-        for j, elem_trello in enumerate(trello_data):
-            try:
-                if elem_trello['shortLink'] in elem_tmetric['details']['projectTask']['relativeIssueUrl']:
-                    end_time = elem_tmetric['endTime']
-                    start_time = elem_tmetric['startTime']
-                    end_date = dt.datetime(int(end_time[:4]),int(end_time[5:7]),int(end_time[8:10]),int(end_time[11:13]),int(end_time[14:16]),int(end_time[17:19]))
-                    start_date = dt.datetime(int(start_time[:4]),int(start_time[5:7]),int(start_time[8:10]),int(start_time[11:13]),int(start_time[14:16]),int(start_time[17:19]))
-                    item = {"duration" : str(dateDiff(end_date,start_date)), "idShort" : elem_trello['idShort'], "name" : elem_tmetric['details']['projectTask']['description']}
-                    status_reports_data.append(item)
-                    project_id = elem_tmetric['details']['projectId']
-            except:
-                pass
-        
-    short_task_list = []
-    for elem in status_reports_data:
-        if elem['idShort'] not in short_task_list:
-            short_task_list.append(elem['idShort'])
+    profile_id_url = 'https://app.tmetric.com/api/accounts/18538/timeentries/group'
+    profile_id_data = requests.get('https://app.tmetric.com/api/accounts/18538/timeentries/group', headers=headers).json()
 
-    for task_id in short_task_list:
-        sum = 0
+    for elem_profile_id in profile_id_data:
+        tmetric_url = "https://app.tmetric.com/api/accounts/18538/timeentries/"+ str(elem_profile_id['userProfileId']) +"?timeRange.startTime=" + str(start_date.year) + "-" + str(start_date.month) + "-" + str(start_date.day) + "T00:00:00Z&timeRange.endTime=" + str(end_date.year) + "-" + str(end_date.month) + "-" + str(end_date.day) + "T23:59:59Z"
+        response_tmetric = requests.get(tmetric_url, headers=headers)
+
+        for elem_tmetric in response_tmetric.json():
+            for elem_trello in trello_data:
+                try:
+                    if elem_trello['shortLink'] in elem_tmetric['details']['projectTask']['relativeIssueUrl']:
+                        end_time = elem_tmetric['endTime']
+                        start_time = elem_tmetric['startTime']
+                        end_date = dt.datetime(int(end_time[:4]),int(end_time[5:7]),int(end_time[8:10]),int(end_time[11:13]),int(end_time[14:16]),int(end_time[17:19]))
+                        start_date = dt.datetime(int(start_time[:4]),int(start_time[5:7]),int(start_time[8:10]),int(start_time[11:13]),int(start_time[14:16]),int(start_time[17:19]))
+                        item = {"duration" : str(dateDiff(end_date,start_date)), "idShort" : elem_trello['idShort'], "name" : elem_tmetric['details']['projectTask']['description']}
+                        status_reports_data.append(item)
+                        project_id = elem_tmetric['details']['projectId']
+                except:
+                    pass
+                    
+        short_task_list = []
         for elem in status_reports_data:
-            if task_id == elem['idShort']:
-                sum = sum + float(elem['duration'])
-                task_name = elem['name']
-        final_status_report_data.append({"id":task_id, "name":task_name, "hours": str(round((sum/3600), 2)), "budget": str(get_project_budget(project_id)) })
+            if elem['idShort'] not in short_task_list:
+                short_task_list.append(elem['idShort'])
+
+        for task_id in short_task_list:
+            hours_sum = 0
+            for elem in status_reports_data:
+                if task_id == elem['idShort']:
+                    hours_sum = hours_sum + float(elem['duration'])
+                    task_name = elem['name']
+        try:
+            if len(task_name) > 0:
+                final_status_report_data.append({"id":task_id, "name":task_name, "hours": str(round((hours_sum/3600), 2)), "budget": str(get_project_budget(project_id)) })
+                task_name = ''
+        except:
+            pass
+        status_reports_data = []
+
 
     return final_status_report_data
