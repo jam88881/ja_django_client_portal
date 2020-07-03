@@ -9,8 +9,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from os import path
-from .settings import TRELLO_API_KEY, TRELLO_API_TOKEN, TMETRIC_TOKEN, TRELLO_API_TOKEN, TMETRIC_TOKEN
+from .settings import TRELLO_API_KEY, TRELLO_API_TOKEN, TMETRIC_TOKEN, TRELLO_API_TOKEN, TMETRIC_ACCOUNT_ID
 
+headers = { "Authorization" : TMETRIC_TOKEN, "Content-Type" : "application/json"}
 
 def dash(request):
     board_data = []
@@ -24,15 +25,18 @@ def dash(request):
 
     return render(request, 'dash.html', {'board_data':board_data})
 
+def last_four_sundays(year, month, day, shift = 0):
+    d = dt.date(year, month, day)
+    if shift != 0:
+        d += timedelta(days = 7)
+    d += timedelta(days = 6 - d.weekday())
+    for i in range(1,5):
+        yield d
+        d += timedelta(days = 7)
+
 def status(request):
-    for e in request.user.user_permissions.filter(content_type = 13): #13 is trelloaccess
-        trello_api_url = 'https://api.trello.com/1/boards/' + e.codename + '/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN
-
-    board_name = str(e).split('|')[2].replace('_',' ').replace(' Access','')
-
+    
     status_data = []
-    response = requests.get(trello_api_url)
-
     date_list = []
     date_list_shift_7 = []
     now = dt.datetime.now()
@@ -47,101 +51,102 @@ def status(request):
 
     date_list.reverse()
     date_list_shift_7.reverse()
+    for e in request.user.user_permissions.filter(content_type = 13):
+        board_name = str(e).split('|')[2].replace('_',' ').replace(' Access','')
+        for i in range(1,5):
 
-    for i in range(1,5):
+            if i == 1:
+                header = "Here is the latest Status Report"
+            elif i == 2:
+                header = "Here is last week's Status Report"
+            else:
+                header = "Status report " + str(date_list_shift_7[i-1])
 
-        if i == 1:
-            header = "Here is the latest Status Report"
-        elif i == 2:
-            header = "Here is last week's Status Report"
-        else:
-            header = "Status report " + str(date_list_shift_7[i-1])
-        tmetric_entries = get_tmetric_entries(request, response, date_list[i-1], date_list_shift_7[i-1])
-        status_data_item = {
-            "idx":str(i),
-            "week": str(date_list[i-1]) + " to " + str(date_list_shift_7[i-1]),
-            "report_header":header,
-            "report" : tmetric_entries
-        }
-
-        status_data.append(status_data_item)
+            status_data_item = {
+                "idx" : str(i),
+                "week" : str(date_list[i-1]) + " to " + str(date_list_shift_7[i-1]),
+                "report_header" : header,
+                "report" : get_board_related_tmetric_entries(e.codename, date_list[i-1], date_list_shift_7[i-1])
+            }
+            status_data.append(status_data_item)
 
     return render(request, 'status-reports.html', {'status_data':status_data, 'board_name':board_name})
 
-def dateDiff(date1, date2):
-    return (date1-date2).total_seconds()
 
-def last_four_sundays(year, month, day, shift = 0):
-    d = dt.date(year, month, day)
-    if shift != 0:
-        d += timedelta(days = 7)
-    d += timedelta(days = 6 - d.weekday())
-    for i in range(1,5):
-        yield d
-        d += timedelta(days = 7)
+def get_trello_cards(board):
+    trello_card_data = []
+    trello_cards_url = 'https://api.trello.com/1/boards/' + board + '/cards/?key=' + TRELLO_API_KEY + '&token=' + TRELLO_API_TOKEN
+    trello_cards_response_json = requests.get(trello_cards_url).json()
+    for elem_trello_card in trello_cards_response_json:
+        trello_card_data.append({'idShort':elem_trello_card['idShort'],
+                                 'shortLink':elem_trello_card['shortLink'],
+                                 'name':elem_trello_card['name']})
+    return trello_card_data
+
+
+def get_tmetric_user_profile_ids():
+    user_profile_id_data = []
+    user_profile_id_request_url = 'https://app.tmetric.com/api/accounts/18538/timeentries/group'
+    user_profile_id_response_json = requests.get(user_profile_id_request_url, headers=headers).json()
+    for elem_user_profile_id in user_profile_id_response_json:
+        user_profile_id_data.append({'userProfileID':str(elem_user_profile_id['userProfileId'])})
+    return user_profile_id_data
+
+
+def get_tmetric_entries(user_profile_id, param_start_date, param_end_date):
+    loop_count = 0
+    budget = 'No budget'
+    entries_data = []
+    entries_data_request_url = 'https://app.tmetric.com/api/accounts/18538/timeentries/'+ user_profile_id +"?timeRange.startTime=" + str(param_start_date.year) + "-" + str(param_start_date.month) + "-" + str(param_start_date.day) + "T00:00:00Z&timeRange.endTime=" + str(param_end_date.year) + "-" + str(param_end_date.month) + "-" + str(param_end_date.day) + "T23:59:59Z"
+    entries_data_response_json = requests.get(entries_data_request_url, headers=headers).json()
+    for elem_entries_data in entries_data_response_json:
+        #try to get the board budget
+        if loop_count == 0:
+            try:
+                budget = get_project_budget(elem_entries_data['details']['projectId'])
+            except:
+                pass
+        try:
+            end_time = elem_entries_data['endTime']
+            start_time = elem_entries_data['startTime']
+            end_date = dt.datetime(int(end_time[:4]),int(end_time[5:7]),int(end_time[8:10]),int(end_time[11:13]),int(end_time[14:16]),int(end_time[17:19]))
+            start_date = dt.datetime(int(start_time[:4]),int(start_time[5:7]),int(start_time[8:10]),int(start_time[11:13]),int(start_time[14:16]),int(start_time[17:19]))
+            entries_data.append({'relativeIssueID':elem_entries_data['details']['projectTask']['relativeIssueUrl'], 'duration':(end_date-start_date).total_seconds()})
+        except:
+            pass
+        loop_count += 1
+    return entries_data, budget
+
 
 def get_project_budget(project_id):
     budget_url = 'https://app.tmetric.com/api/accounts/18538/projects/' + str(project_id)
-    headers = { "Authorization" : TMETRIC_TOKEN,
-                "Content-Type" : "application/json"}
     response = requests.get(budget_url, headers=headers)
     try:
         return response.json()['budgetSize']
     except:
-        return 'No Budget'
-
-def get_tmetric_entries(request, trello_response, start_date, end_date):
-    trello_data = []
-    status_reports_data = []
-    final_status_report_data = []
-    project_id = ''
-    headers = { "Authorization" : TMETRIC_TOKEN,"Content-Type" : "application/json"}
-
-    for elem in trello_response.json():
-        item = {"shortLink" : elem['shortLink'], "name" : elem['name'], "idShort" : elem['idShort']}
-        trello_data.append(item)
-
-    headers = { "Authorization" : TMETRIC_TOKEN,"Content-Type" : "application/json"}
-
-    profile_id_url = 'https://app.tmetric.com/api/accounts/18538/timeentries/group'
-    profile_id_data = requests.get('https://app.tmetric.com/api/accounts/18538/timeentries/group', headers=headers).json()
-
-    for elem_profile_id in profile_id_data:
-        tmetric_url = "https://app.tmetric.com/api/accounts/18538/timeentries/"+ str(elem_profile_id['userProfileId']) +"?timeRange.startTime=" + str(start_date.year) + "-" + str(start_date.month) + "-" + str(start_date.day) + "T00:00:00Z&timeRange.endTime=" + str(end_date.year) + "-" + str(end_date.month) + "-" + str(end_date.day) + "T23:59:59Z"
-        response_tmetric = requests.get(tmetric_url, headers=headers)
-
-        for elem_tmetric in response_tmetric.json():
-            for elem_trello in trello_data:
-                try:
-                    if elem_trello['shortLink'] in elem_tmetric['details']['projectTask']['relativeIssueUrl']:
-                        end_time = elem_tmetric['endTime']
-                        start_time = elem_tmetric['startTime']
-                        end_date = dt.datetime(int(end_time[:4]),int(end_time[5:7]),int(end_time[8:10]),int(end_time[11:13]),int(end_time[14:16]),int(end_time[17:19]))
-                        start_date = dt.datetime(int(start_time[:4]),int(start_time[5:7]),int(start_time[8:10]),int(start_time[11:13]),int(start_time[14:16]),int(start_time[17:19]))
-                        item = {"duration" : str(dateDiff(end_date,start_date)), "idShort" : elem_trello['idShort'], "name" : elem_tmetric['details']['projectTask']['description']}
-                        status_reports_data.append(item)
-                        project_id = elem_tmetric['details']['projectId']
-                except:
-                    pass
-                    
-        short_task_list = []
-        for elem in status_reports_data:
-            if elem['idShort'] not in short_task_list:
-                short_task_list.append(elem['idShort'])
-
-        for task_id in short_task_list:
-            hours_sum = 0
-            for elem in status_reports_data:
-                if task_id == elem['idShort']:
-                    hours_sum = hours_sum + float(elem['duration'])
-                    task_name = elem['name']
-        try:
-            if len(task_name) > 0:
-                final_status_report_data.append({"id":task_id, "name":task_name, "hours": str(round((hours_sum/3600), 2)), "budget": str(get_project_budget(project_id)) })
-                task_name = ''
-        except:
-            pass
-        status_reports_data = []
+        return 'No budget'
 
 
-    return final_status_report_data
+def get_board_related_tmetric_entries(board, start_date, end_date):
+    all_tmetric_entries = []
+    tmetric_user_profile_ids = get_tmetric_user_profile_ids()
+    for i in tmetric_user_profile_ids:
+        tmetric_entries, board_budget = get_tmetric_entries(i['userProfileID'], start_date, end_date)
+        for j in tmetric_entries:
+            all_tmetric_entries.append(j)
+
+    #sum up tmetric entries based on what is in the boards
+    #project_id = ''
+    board_related_tmetric_entries = []
+    trello_cards = get_trello_cards(board)
+    for card in trello_cards:
+        hours_sum = 0
+        for entry in all_tmetric_entries:
+            if card['shortLink'] in entry['relativeIssueID']:
+                hours_sum = hours_sum + float(entry['duration'])
+                #project_id = entry['details']['projectID']
+        if hours_sum > 0:
+            board_related_tmetric_entries.append({'id':card['idShort'],'name':card['name'],'hours':round(((hours_sum/60)/60),2),'budget':str(board_budget)})
+
+    return board_related_tmetric_entries
+
