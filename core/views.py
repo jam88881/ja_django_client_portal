@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from os import path
-from .settings import TRELLO_API_KEY, TRELLO_API_TOKEN, TMETRIC_TOKEN, TRELLO_API_TOKEN, TMETRIC_ACCOUNT_ID
+from .settings import TRELLO_API_KEY, TRELLO_ACCOUNT_ID, TRELLO_USER_PROFILE_ID, TRELLO_API_TOKEN, TMETRIC_TOKEN
 
 headers = { "Authorization" : TMETRIC_TOKEN, "Content-Type" : "application/json"}
 
