@@ -39,3 +39,4 @@ env/Lib/site-packages/pip-20.0.2.virtualenv
 env/Lib/site-packages/setuptools-46.0.0.virtualenv
 env/Lib/site-packages/wheel-0.34.2.virtualenv
 env/Lib/site-packages/__pycache__/_virtualenv.cpython-37.pyc
+core/settings.py
