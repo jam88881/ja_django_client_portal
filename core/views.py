@@ -35,7 +35,7 @@ def last_four_sundays(year, month, day, shift = 0):
         d += timedelta(days = 7)
 
 def status(request):
-    
+
     status_data = []
     date_list = []
     date_list_shift_7 = []
@@ -101,6 +101,7 @@ def get_tmetric_entries(user_profile_id, param_start_date, param_end_date):
     entries_data_response_json = requests.get(entries_data_request_url, headers=headers).json()
     for elem_entries_data in entries_data_response_json:
         #try to get the board budget
+
         if loop_count == 0:
             try:
                 budget = get_project_budget(elem_entries_data['details']['projectId'])
@@ -128,10 +129,14 @@ def get_project_budget(project_id):
 
 
 def get_board_related_tmetric_entries(board, start_date, end_date):
+    master_budget = 'No budget'
     all_tmetric_entries = []
     tmetric_user_profile_ids = get_tmetric_user_profile_ids()
     for i in tmetric_user_profile_ids:
         tmetric_entries, board_budget = get_tmetric_entries(i['userProfileID'], start_date, end_date)
+        #save a budget value if it is found, don't bother if it has already been found
+        if board_budget != 'No budget' and master_budget == 'No budget':
+            master_budget = board_budget
         for j in tmetric_entries:
             all_tmetric_entries.append(j)
 
@@ -146,7 +151,7 @@ def get_board_related_tmetric_entries(board, start_date, end_date):
                 hours_sum = hours_sum + float(entry['duration'])
                 #project_id = entry['details']['projectID']
         if hours_sum > 0:
-            board_related_tmetric_entries.append({'id':card['idShort'],'name':card['name'],'hours':round(((hours_sum/60)/60),2),'budget':str(board_budget)})
+            board_related_tmetric_entries.append({'id':card['idShort'],'name':card['name'],'hours':round(((hours_sum/60)/60),2),'budget':str(master_budget)})
 
     return board_related_tmetric_entries
 
