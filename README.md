@@ -53,3 +53,13 @@ pip install django-allauth
 ```
 python manage.py runserver
 ```
+
+# Give yourself permission to see stuff
+Go to the Django admin page and give yourselfpermission to see EXACTLY ONE trello board. At the time of writing this the application is not going to support a user having access to more than one trello board at a time. 
+Here are the steps: 
+1. in the browser go to http://127.0.0.1:8000/admin/ and login
+2. Click on Users
+3. Click on the user name to give permission to (probably yourself)
+4. Add ONLY 1 Trello permission (based on what board you want to see)
+5. Save
+6. check the dashboard to make sure it is getting cards from the right board
