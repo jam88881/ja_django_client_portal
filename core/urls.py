@@ -12,6 +12,7 @@ from . import views
 urlpatterns = [
     path('', views.dash),
     path('status-reports.html', views.status),
+    path('update-status-reports.html', views.updates),
     path('admin/', admin.site.urls),
     path("", include("authentication.urls")),  
     path("", include("app.urls")), 

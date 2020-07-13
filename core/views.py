@@ -3,13 +3,14 @@ import json
 import os
 import requests
 import yaml
+import psycopg2
 from datetime import timedelta
 
 from django.http import HttpResponse
 from django.shortcuts import render
 
 from os import path
-from .settings import TRELLO_API_KEY, TRELLO_ACCOUNT_ID, TRELLO_USER_PROFILE_ID, TRELLO_API_TOKEN, TMETRIC_TOKEN
+from .settings import DATABASES, TRELLO_API_KEY, TRELLO_ACCOUNT_ID, TRELLO_USER_PROFILE_ID, TRELLO_API_TOKEN, TMETRIC_TOKEN
 
 headers = { "Authorization" : TMETRIC_TOKEN, "Content-Type" : "application/json"}
 
@@ -35,7 +36,6 @@ def last_four_sundays(year, month, day, shift = 0):
         d += timedelta(days = 7)
 
 def status(request):
-
     status_data = []
     date_list = []
     date_list_shift_7 = []
@@ -72,6 +72,48 @@ def status(request):
 
     return render(request, 'status-reports.html', {'status_data':status_data, 'board_name':board_name})
 
+def insert_status_reports_entry(report_date, card_id, card_name, hours):
+    sql_insert = """INSERT INTO status_reports(report_date,trello_card_id,trello_card_name,hours) VALUES (DATE('{0}'), '{1}', '{2}', '{3}')""".format(str(report_date[0:11]), card_id, card_name.replace("'",'`'), str(hours))
+    conn = None
+    try:
+        conn = psycopg2.connect(host=DATABASES['default']['HOST'],
+        database=DATABASES['default']['NAME'], 
+        user=DATABASES['default']['USER'], 
+        password=DATABASES['default']['PASSWORD'])
+        cur = conn.cursor()
+        cur.execute(sql_insert)
+        conn.commit()
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+def updates(request):
+    status_data = []
+    date_list = []
+    date_list_shift_7 = []
+    now = dt.datetime.now()
+    time_delta_28_days = dt.timedelta(days = 28)
+    a_month_ago = now - time_delta_28_days
+
+    for i in last_four_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day):
+        date_list.append(i)
+    
+    for i in last_four_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day,7):
+        date_list_shift_7.append(i)
+
+    date_list.reverse()
+    date_list_shift_7.reverse()
+    for e in request.user.user_permissions.filter(content_type = 13):
+        board_name = str(e).split('|')[2].replace('_',' ').replace(' Access','')
+        for i in range(1,5):
+            entry_data = get_board_related_tmetric_entries(e.codename, date_list[i-1], date_list_shift_7[i-1])
+            for elem in entry_data:
+                insert_status_reports_entry(str(elem['report_date']),str(elem['id']), str(elem['name']), str(elem['hours']))
+
+    return render(request, 'update-status-reports.html')
 
 def get_trello_cards(board):
     trello_card_data = []
@@ -112,7 +154,7 @@ def get_tmetric_entries(user_profile_id, param_start_date, param_end_date):
             start_time = elem_entries_data['startTime']
             end_date = dt.datetime(int(end_time[:4]),int(end_time[5:7]),int(end_time[8:10]),int(end_time[11:13]),int(end_time[14:16]),int(end_time[17:19]))
             start_date = dt.datetime(int(start_time[:4]),int(start_time[5:7]),int(start_time[8:10]),int(start_time[11:13]),int(start_time[14:16]),int(start_time[17:19]))
-            entries_data.append({'relativeIssueID':elem_entries_data['details']['projectTask']['relativeIssueUrl'], 'duration':(end_date-start_date).total_seconds()})
+            entries_data.append({'relativeIssueID':elem_entries_data['details']['projectTask']['relativeIssueUrl'], 'duration':(end_date-start_date).total_seconds(), 'endDate':end_date})
         except:
             pass
         loop_count += 1
@@ -146,12 +188,15 @@ def get_board_related_tmetric_entries(board, start_date, end_date):
     trello_cards = get_trello_cards(board)
     for card in trello_cards:
         hours_sum = 0
+        end_date = dt.datetime.min
         for entry in all_tmetric_entries:
             if card['shortLink'] in entry['relativeIssueID']:
                 hours_sum = hours_sum + float(entry['duration'])
-                #project_id = entry['details']['projectID']
+                if end_date < entry['endDate']:
+                    end_date = entry['endDate']
+
         if hours_sum > 0:
-            board_related_tmetric_entries.append({'id':card['idShort'],'name':card['name'],'hours':round(((hours_sum/60)/60),2),'budget':str(master_budget)})
+            board_related_tmetric_entries.append({'id':card['idShort'],'name':card['name'],'hours':round(((hours_sum/60)/60),2),'budget':str(master_budget), 'report_date':end_date})
 
     return board_related_tmetric_entries
 
