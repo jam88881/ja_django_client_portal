@@ -503,33 +503,13 @@
     </div>
   </div>
 </div>
-<!--<div class="row">
-  <div class="col-md-12">
-    <div class="card card-profile">
-      <div class="card-body">
-        <h2>Logged hours</h2>
 
-        <input type="text" id="myInput" onkeyup="search()" placeholder="Search by task.."
-          title="Type in a task name">
 
-        <table id="myTable">
-          <tr class="header">
-            <th style="width:80%;">Tasks</th>
-            <th style="width:80%;">Hours</th>
-          </tr>
-          {% for each in logged_hours%}
-          <tr>
-            <td>{{each.id}} - {{each.name}}</td>
-            <td>{{each.hours}}</td>
-          </tr>
-          {% endfor %}
-          
-        </table>
-      </div>
-    </div>
-  </div>
-</div>-->
 
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
 <script>
   function search() {
     var input, filter, table, tr, td, i, txtValue;
@@ -580,8 +560,4 @@
   showStatus();
 
 </script>
-
-{% endblock content %}
-
-<!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% endblock javascripts %}
