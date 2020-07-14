@@ -11,9 +11,9 @@ from . import views
 
 urlpatterns = [
     path('', views.dash),
-    path('dash/', views.dash),
     path('status-reports/', views.status),
     path('update-status-reports/', views.updates),
+    path('submitted-updates/', views.submitted_updates),
     path('admin/', admin.site.urls),
     path("", include("authentication.urls")),  
     path("", include("app.urls")), 
