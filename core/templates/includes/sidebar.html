@@ -1,52 +1,63 @@
-<div class="sidebar">
-    <div class="logo">
-      <a target="_blank" href="accounts/login.html" class="simple-text">
-        LOGIN
-      </a>
-    </div>
+{% load static %}
 
-    {% if user.is_authenticated %}
-    <ul class="nav">
-      <li>
-        <a href="/">
-          <i class="tim-icons icon-components"></i>
-          <p>Dashboard</p>
-        </a>
-      </li>
-      <!--<li>
-        <a href="/page-blank.html">
-          <i class="tim-icons icon-bell-55"></i>
-          <p>Notifications</p>
-        </a>
-      </li>-->
-      <li>
-        <a href="/status-reports.html">
-          <i class="tim-icons icon-paper"></i>
-          <p>Status Reports</p>
-        </a>
-      </li>
-      <!--<li>
-        <a href="/page-blank.html">
-          <i class="tim-icons icon-credit-card"></i>
-          <p>Payments</p>
-        </a>
-      </li>-->
-      {% if user.is_superuser %}
-      <li>
-        <a href="/admin">
-          <i class="tim-icons icon-settings-gear-63"></i>
-          <p>Administration</p>
-        </a>
-      </li>
-      {% endif %}
-      <li>
-        <a href="https://drive.google.com/drive/">
-          <i class="tim-icons icon-app"></i>
-          <p>GOOGLE DRIVE</p>
-        </a>
-      </li>
+<div class="wrapper">
+	<!-- Sidebar -->
+	<nav id="sidebar">
+		<div class="sidebar-header">
+				<h3>Sparkfish Client Portal</h3>
+		</div>
 
-    </ul>
-    {% endif %}
+		<div class="container-fluid">
 
-</div>
+				<button type="button" id="sidebarCollapse" class="btn btn-info float-right">
+						<i class="fas fa-list"></i>
+				</button>
+
+		</div>
+
+		<ul class="list-unstyled components">
+			<a target="_blank" href="accounts/login.html">
+				<p style="color: #007bff">LOGIN</p>
+			</a>
+			<hr>
+			<li class="active">
+				<a class="nav-text" href="/">
+					<span><i class="fas fa-cubes nav-icon" style="color:#5e72e4"></i> Dashboard </span>
+				</a>
+			</li>
+
+			
+			<li>
+				<a class="nav-text" href="/#">
+					<span><i class="fas fa-bell nav-icon" style="color:#fc8b74"></i> Notifications </span>
+				</a>
+			</li>
+			<li>
+				<a class="nav-text" href="/status-reports.html">
+					<span><i class="fas fa-file-invoice nav-icon" style="color:#22d0f0"></i> Status Reports </span>
+				</a>
+			</li>
+			<li>
+				<a class="nav-text" href="/#">
+					<span><i class="fas fa-credit-card nav-icon" style="color:#f3a4b5"></i> Payments </span>
+				</a>
+			</li>
+			{% if user.is_superuser %}
+			<li>
+				<a class="nav-text" href="/admin">
+					<span><i class="fas fa-cog nav-icon" style="color:#2dce89"></i> Administration </span>
+				</a>
+			</li>
+			{% endif %}
+			<li>
+				<a class="nav-text" href="https://drive.google.com/drive/">
+					<span><i class="fab fa-google-drive nav-icon" style="color:#4f7dc4"></i> Google Drive </span>
+				</a>
+			</li>
+
+		</ul>
+	</nav>
+
+</div>  
+
+<script src="{% static 'custom/js/sidebar.js' %}"></script>

@@ -137,12 +137,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'ui')
+STATIC_URL = '/ui/static/'
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'core/static'),
+    os.path.join(BASE_DIR, 'ui/static'),
 )
 #############################################################
 #############################################################
@@ -169,9 +169,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 
 #get the Trello API Key and Token
-TRELLO_API_KEY = os.environ.get('TRELLO_API_KEY') 
-TRELLO_ACCOUNT_ID = os.environ.get('TRELLO_ACCOUNT_ID')
-TRELLO_USER_PROFILE_ID = os.environ.get('TRELLO_USER_PROFILE_ID')
-TRELLO_API_TOKEN = os.environ.get('TRELLO_API_TOKEN')
-TMETRIC_TOKEN = os.environ.get('TMETRIC_TOKEN')
-
+TRELLO_API_KEY = '4e15254bd0830e2b1f4e79d12bebf60d'#os.environ.get('TRELLO_API_KEY') #
+TRELLO_ACCOUNT_ID = '18538'#'18538'
+TRELLO_USER_PROFILE_ID = '132870'#'132870'
+TRELLO_API_TOKEN = '6d46576c490239c0e0ba711c703b4daee24243e3485ab393381ba649a1f11272'#'6d46576c490239c0e0ba711c703b4daee24243e3485ab393381ba649a1f11272'
+TMETRIC_TOKEN = 'Bearer 7ae182feb9c9ffa0a727d01584c62aced8829c72df528835d8ec68209887901a'#'Bearer 7ae182feb9c9ffa0a727d01584c62aced8829c72df528835d8ec68209887901a'
