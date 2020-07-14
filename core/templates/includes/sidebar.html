@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {% load static %}
 
 <div class="wrapper">
@@ -34,7 +33,7 @@
 				</a>
 			</li>
 			<li>
-				<a class="nav-text" href="/status-reports.html">
+				<a class="nav-text" href="/status-reports">
 					<span><i class="fas fa-file-invoice nav-icon" style="color:#22d0f0"></i> Status Reports </span>
 				</a>
 			</li>
@@ -61,4 +60,9 @@
 
 </div>  
 
-<script src="{% static 'custom/js/sidebar.js' %}"></script>
+
+{% block javascripts %}
+
+	<script src="{% static 'custom/js/sidebar.js' %}"></script>
+
+{% endblock javascripts %}

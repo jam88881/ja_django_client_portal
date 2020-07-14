@@ -1,4 +1,5 @@
 {% extends 'layouts/base.html' %}
+{% load static %}
 
 {% block title %} Page Blank {% endblock %}
 
@@ -481,9 +482,9 @@
         <h1>{{ board_name }}</h1>
         {% for each in status_data%}
         {% if each.idx == '1' %}
-        <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" checked>
+        <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" checked>
         {% else %}
-        <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" >
+        <input class="checkbox-budget" type="radio" name="status" id="status-{{ each.idx }}" >
         {% endif %}
         <label class="for-checkbox-budget" for="status-{{ each.idx }}">
           <span>{{ each.week }}</span>
@@ -504,12 +505,9 @@
   </div>
 </div>
 
-
-
-{% endblock content %}
+{% block javascripts %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}
 <script>
   function search() {
     var input, filter, table, tr, td, i, txtValue;
@@ -531,7 +529,6 @@
   }
 
   function showStatus() {
-
     if (document.getElementById('status-1').checked) {
       document.getElementById('statusReport-1').style.display = 'block';
       document.getElementById('statusReport-2').style.display = 'none';
@@ -557,7 +554,18 @@
     }
   }
 
+  document.getElementsByName('status').forEach(element => {
+    element.onclick = showStatus()
+  }); 
+
   showStatus();
 
+  
 </script>
+
 {% endblock javascripts %}
+
+{% endblock content %}
+
+
+
