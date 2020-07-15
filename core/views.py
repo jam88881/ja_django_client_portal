@@ -6,6 +6,7 @@ import yaml
 import psycopg2
 from datetime import timedelta
 
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -26,14 +27,42 @@ def dash(request):
 
     return render(request, 'dash.html', {'board_data':board_data})
 
-def last_four_sundays(year, month, day, shift = 0):
+def last_n_sundays(year, month, day, n, shift = 0):
     d = dt.date(year, month, day)
     if shift != 0:
         d += timedelta(days = 7)
     d += timedelta(days = 6 - d.weekday())
-    for i in range(1,5):
+    for i in range(1,n):
         yield d
         d += timedelta(days = 7)
+
+def get_report_body(board, start_date, end_date):
+    report_body = []
+    sql_select_sp_get_report_body = """SELECT * FROM status_reports WHERE report_DATE BETWEEN '{0}' AND '{1}' AND trello_board_id = '{2}'""".format(start_date, end_date, board)
+    conn = None
+    try:
+        print(sql_select_sp_get_report_body)
+        conn = psycopg2.connect(host=DATABASES['default']['HOST'],
+        database=DATABASES['default']['NAME'], 
+        user=DATABASES['default']['USER'], 
+        password=DATABASES['default']['PASSWORD'])
+        cur = conn.cursor()
+        cur.execute(sql_select_sp_get_report_body)
+        
+        raw_report_body = cur.fetchall() 
+
+        for elem in raw_report_body:
+            report_body.append({'id':elem[3], 'name': elem[4], 'hours':elem[5] })
+
+        conn.commit()
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return report_body
 
 def status(request):
     status_data = []
@@ -43,10 +72,10 @@ def status(request):
     time_delta_28_days = dt.timedelta(days = 28)
     a_month_ago = now - time_delta_28_days
 
-    for i in last_four_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day):
+    for i in last_n_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day, 5 ):
         date_list.append(i)
     
-    for i in last_four_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day,7):
+    for i in last_n_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day, 5, 7):
         date_list_shift_7.append(i)
 
     date_list.reverse()
@@ -66,16 +95,17 @@ def status(request):
                 "idx" : str(i),
                 "week" : str(date_list[i-1]) + " to " + str(date_list_shift_7[i-1]),
                 "report_header" : header,
-                "report" : get_board_related_tmetric_entries(e.codename, date_list[i-1], date_list_shift_7[i-1])
+                "report" : get_report_body(e.codename, date_list[i-1], date_list_shift_7[i-1])
             }
             status_data.append(status_data_item)
-
+    
     return render(request, 'status-reports.html', {'status_data':status_data, 'board_name':board_name})
 
-def insert_status_reports_entry(report_date, card_id, card_name, hours):
-    sql_insert = """INSERT INTO status_reports(report_date,trello_card_id,trello_card_name,hours) VALUES (DATE('{0}'), '{1}', '{2}', '{3}')""".format(str(report_date[0:11]), card_id, card_name.replace("'",'`'), str(hours))
+def insert_status_reports_entry(report_date, board_id, card_id, card_name, hours):
+    sql_insert = """INSERT INTO status_reports(report_date,trello_board_id,trello_card_id,trello_card_name,tmetric_hours) VALUES (DATE('{0}'), '{1}', '{2}', '{3}', '{4}')""".format(str(report_date[0:10]), board_id, card_id, card_name.replace("'",'`'), str(hours))
     conn = None
     try:
+        print(sql_insert)
         conn = psycopg2.connect(host=DATABASES['default']['HOST'],
         database=DATABASES['default']['NAME'], 
         user=DATABASES['default']['USER'], 
@@ -91,29 +121,57 @@ def insert_status_reports_entry(report_date, card_id, card_name, hours):
             conn.close()
 
 def updates(request):
+    board_list = []
+    sql_select = "SELECT * FROM auth_permission WHERE content_type_id = 13"
+    try:
+        conn = psycopg2.connect(host=DATABASES['default']['HOST'],
+        database=DATABASES['default']['NAME'], 
+        user=DATABASES['default']['USER'], 
+        password=DATABASES['default']['PASSWORD'])
+        cur = conn.cursor()
+        cur.execute(sql_select)
+        raw_board_data = cur.fetchall() 
+        for elem in raw_board_data:
+            board_list.append({'id': elem[3], 'name': elem[1]})
+        conn.commit()
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+     
+    return render(request, 'update-status-reports.html', {'board_list':board_list})
+
+
+def submitted_updates(request):
     status_data = []
     date_list = []
     date_list_shift_7 = []
     now = dt.datetime.now()
-    time_delta_28_days = dt.timedelta(days = 28)
-    a_month_ago = now - time_delta_28_days
+    weeks = 0
+    board_id = ''
+    if(request.GET.get('mybtn')):
+        weeks = int(request.GET.get('ddlWeeks'))
+        board_id = request.GET.get('ddlBoards')
+    time_delta = dt.timedelta(days = (7*weeks))
+    a_month_ago = now - time_delta
 
-    for i in last_four_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day):
+    for i in last_n_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day, weeks):
         date_list.append(i)
     
-    for i in last_four_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day,7):
+    for i in last_n_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day, weeks, 7):
         date_list_shift_7.append(i)
 
     date_list.reverse()
     date_list_shift_7.reverse()
-    for e in request.user.user_permissions.filter(content_type = 13):
-        board_name = str(e).split('|')[2].replace('_',' ').replace(' Access','')
-        for i in range(1,5):
-            entry_data = get_board_related_tmetric_entries(e.codename, date_list[i-1], date_list_shift_7[i-1])
-            for elem in entry_data:
-                insert_status_reports_entry(str(elem['report_date']),str(elem['id']), str(elem['name']), str(elem['hours']))
 
-    return render(request, 'update-status-reports.html')
+    for i in range(1,weeks):
+        entry_data = get_board_related_tmetric_entries(board_id, date_list[i-1], date_list_shift_7[i-1])
+        for elem in entry_data:
+            insert_status_reports_entry(str(elem['report_date']), board_id, str(elem['id']), str(elem['name']), str(elem['hours']))
+
+    return HttpResponse('job finished')
 
 def get_trello_cards(board):
     trello_card_data = []
@@ -181,7 +239,7 @@ def get_board_related_tmetric_entries(board, start_date, end_date):
             master_budget = board_budget
         for j in tmetric_entries:
             all_tmetric_entries.append(j)
-
+    
     #sum up tmetric entries based on what is in the boards
     #project_id = ''
     board_related_tmetric_entries = []
