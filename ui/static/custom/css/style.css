@@ -4,12 +4,19 @@
 }
 
 #sidebar {
-    min-width: 15vw;
     min-height: 100vh;
 }
 
-#sidebar.active {
-    margin-left: -250px;
+
+.sidebar-expanded {
+    width: 15vw;
+}
+.sidebar-collapsed {
+    width: 5vw;
+}
+
+.sidebar-collapsed .portal-title {
+    display: none;
 }
 
 a[data-toggle="collapse"] {
@@ -94,3 +101,12 @@ ul ul a {
 p .login-link {
     color: #007bff;
 }
+
+.nav-tall {
+    min-height: 5vh;
+}
+
+.main-panel>.content {
+    padding: 78px 30px 30px 78px;
+    min-height: calc(100vh - 70px);
+  }
