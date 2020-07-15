@@ -19,6 +19,14 @@
     display: none;
 }
 
+.sidebar-collapsed .nav-text {
+    display: none;
+}
+
+.sidebar-collapsed .nav-sec {
+    justify-content: center;
+}
+
 a[data-toggle="collapse"] {
     position: relative;
 }

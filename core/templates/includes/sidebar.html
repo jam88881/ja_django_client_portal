@@ -23,37 +23,67 @@
 
 		<ul class="list-unstyled components">
 			<li class="active">
-				<a class="nav-text" href="/">
-					<span><i class="fas fa-cubes nav-icon" style="color:#5e72e4"></i> Dashboard </span>
+				<a href="/">
+					<div class="d-flex nav-sec">
+						<i class="fas fa-cubes nav-icon" style="color:#5e72e4"></i>
+						<div class="nav-text">
+							Dashboard
+						</div>
+					</div>
 				</a>
 			</li>
 
 			
 			<li>
-				<a class="nav-text" href="/#">
-					<span><i class="fas fa-bell nav-icon" style="color:#fc8b74"></i> Notifications </span>
+				<a href="/#">
+					<div class="d-flex nav-sec">
+						<i class="fas fa-bell nav-icon" style="color:#fc8b74"></i>
+						<div class="nav-text">
+							Notifications
+						</div>
+					</div>
 				</a>
 			</li>
 			<li>
-				<a class="nav-text" href="/status-reports">
-					<span><i class="fas fa-file-invoice nav-icon" style="color:#22d0f0"></i> Status Reports </span>
+				<a href="/status-reports">
+					<div class="d-flex nav-sec">
+						<i class="fas fa-file-invoice nav-icon" style="color:#22d0f0"></i>
+						<div class="nav-text">
+							Status Reports
+						</div>
+					</div>
 				</a>
 			</li>
 			<li>
-				<a class="nav-text" href="/#">
-					<span><i class="fas fa-credit-card nav-icon" style="color:#f3a4b5"></i> Payments </span>
+				<a href="/#">
+					<div class="d-flex nav-sec">
+						<i class="fas fa-credit-card nav-icon" style="color:#f3a4b5"></i>
+						<div class="nav-text">
+							Payments
+						</div>
+					</div>
 				</a>
 			</li>
 			{% if user.is_superuser %}
 			<li>
-				<a class="nav-text" href="/admin">
-					<span><i class="fas fa-cog nav-icon" style="color:#2dce89"></i> Administration </span>
+				<a href="/admin">
+					<div class="d-flex nav-sec">
+						<i class="fas fa-cog nav-icon" style="color:#2dce89"></i>
+						<div class="nav-text">
+							Administration
+						</div>
+					</div>
 				</a>
 			</li>
 			{% endif %}
 			<li>
-				<a class="nav-text" href="https://drive.google.com/drive/">
-					<span><i class="fab fa-google-drive nav-icon" style="color:#4f7dc4"></i> Google Drive </span>
+				<a href="https://drive.google.com/drive/">
+					<div class="d-flex nav-sec">
+						<i class="fab fa-google-drive nav-icon" style="color:#4f7dc4"></i>
+						<div class="nav-text">
+							Google Drive
+						</div>
+					</div>
 				</a>
 			</li>
 
