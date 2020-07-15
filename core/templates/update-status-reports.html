@@ -1,1 +1,30 @@
-updating current user board status reports data for past 4 weeks...
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} Update Status Reports {% endblock %}
+{% block content %}
+<form action="{% url 'submitted_updates' %}" method="GET">
+    Update board 
+    <select name="ddlBoards" id="ddlBoards">
+        {% for each in board_list%}
+        <option value="{{each.id}}">{{each.name}}</option>
+        {% endfor %}
+    </select>
+</br>
+    for the past 
+    <select name="ddlWeeks" id="ddlWeeks">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected>4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+    </select>
+    weeks
+</br>
+    <input type="submit" class="btn" value="Submit" name="mybtn" style="color:white">
+</form>
+{% block javascripts %}
+{% endblock javascripts %}
+{% endblock content %}
