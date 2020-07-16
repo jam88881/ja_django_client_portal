@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %} Update Status Reports {% endblock %}
 {% block content %}
-<form action="{% url 'submitted_updates' %}" method="GET">
+<form action="{% url 'submitted-updates' %}" method="GET">
     Update board 
     <select name="ddlBoards" id="ddlBoards">
         {% for each in board_list%}
