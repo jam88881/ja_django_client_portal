@@ -26,9 +26,9 @@ window.onload = function() {
         }
     }
 
-    document.getElementsByName('status').forEach(element => {
-        element.onclick = showStatus()
-    }); 
+    $('.status').click( function (e) {
+        e.onclick = showStatus()
+    })
     
     showStatus();
 }
