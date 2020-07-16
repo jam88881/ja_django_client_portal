@@ -75,10 +75,10 @@ def status(request):
     time_delta_28_days = datetime.timedelta(days = 28)
     a_month_ago = now - time_delta_28_days
 
-    for i in last_n_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day, 5 ):
+    for i in last_n_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day, 4 ):
         date_list.append(i)
     
-    for i in last_n_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day, 5, 7):
+    for i in last_n_sundays(a_month_ago.year, a_month_ago.month, a_month_ago.day, 4, 7):
         date_list_shift_7.append(i)
 
     date_list.reverse()
@@ -104,8 +104,8 @@ def status(request):
     
     return render(request, 'status-reports.html', {'status_data':status_data, 'board_name':board_name})
 
-def insert_status_reports_entry(report_date, board_id, card_id, card_name, hours):
-    sql_insert = """INSERT INTO status_reports(report_date,trello_board_id,trello_card_id,trello_card_name,tmetric_hours) VALUES (DATE('{0}'), '{1}', '{2}', '{3}', '{4}')""".format(str(report_date[0:10]), board_id, card_id, card_name.replace("'",'`'), str(hours))
+def insert_status_reports_entry(report_date, board_id, card_id, card_name, hours, budget):
+    sql_insert = """INSERT INTO status_reports(report_date,trello_board_id,trello_card_id,trello_card_name,tmetric_hours,budget) VALUES (DATE('{0}'), '{1}', '{2}', '{3}', '{4}', '{5}')""".format(str(report_date[0:10]), board_id, card_id, card_name.replace("'",'`'), str(hours), budget)
     conn = None
     try:
         conn = get_conn()
@@ -120,36 +120,53 @@ def insert_status_reports_entry(report_date, board_id, card_id, card_name, hours
             conn.close()
 
 def run_reports(request):
-    board_list = []
-    sql_select = "SELECT * FROM auth_permission WHERE content_type_id = 13"
+    str_request = str(request)
+    str_url_parameters = ''
     try:
-        conn = get_conn()
-        cur = conn.cursor()
-        cur.execute(sql_select)
-        raw_board_data = cur.fetchall() 
-        for elem in raw_board_data:
-            board_list.append({'id': elem[3], 'name': elem[1]})
-        conn.commit()
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-     
-    return render(request, 'update-status-reports.html', {'board_list':board_list})
+        str_url_parameters = str_request.split('?')[1].replace("'>","")
+    except:
+        str_url_parameters = ''
+
+    import pdb
+    pdb.set_trace()
+
+    if len(str_url_parameters) == 0:
+        board_list = []
+        sql_select = "SELECT * FROM auth_permission WHERE content_type_id = 13"
+        try:
+            conn = get_conn()
+            cur = conn.cursor()
+            cur.execute(sql_select)
+            raw_board_data = cur.fetchall() 
+            for elem in raw_board_data:
+                board_list.append({'id': elem[3], 'name': elem[1]})
+            conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()     
+        return render(request, 'update-status-reports.html', {'board_list':board_list})
+    else:
+        board = str_url_parameters.split('&')[0]
+        weeks = int(str_url_parameters.split('&')[1])
+        return submitted_updates(request, board, weeks)
 
 
-def submitted_updates(request):
+
+def submitted_updates(request, board_id = '', weeks = 0):
     status_data = []
     date_list = []
     date_list_shift_7 = []
     now = datetime.datetime.now()
-    weeks = 0
-    board_id = ''
     if(request.GET.get('mybtn')):
-        weeks = int(request.GET.get('ddlWeeks'))
+        weeks = int(request.GET.get('ddlWeeks')) + 1
         board_id = request.GET.get('ddlBoards')
+
+    import pdb
+    pdb.set_trace()
+
     time_delta = datetime.timedelta(days = (7*weeks))
     some_time_ago = now - time_delta
 
@@ -166,7 +183,7 @@ def submitted_updates(request):
         delete_existing_data(board_id, date_list[i-1], date_list_shift_7[i-1])
         entry_data = get_board_related_tmetric_entries(board_id, date_list[i-1], date_list_shift_7[i-1])
         for elem in entry_data:
-            insert_status_reports_entry(str(elem['report_date']), board_id, str(elem['id']), str(elem['name']), str(elem['hours']))
+            insert_status_reports_entry(str(elem['report_date']), board_id, str(elem['id']), str(elem['name']), str(elem['hours']), elem['budget'])
 
     return HttpResponse('job finished')
 

@@ -17,9 +17,9 @@
         <h1>{{ board_name }}</h1>
         {% for each in status_data%}
         {% if each.idx == '1' %}
-        <input class="checkbox-budget status" type="radio" name="status" id="status-{{ each.idx }}" checked>
+        <input class="checkbox-budget status" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" checked>
         {% else %}
-        <input class="checkbox-budget status" type="radio" name="status" id="status-{{ each.idx }}" >
+        <input class="checkbox-budget status" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();">
         {% endif %}
         <label class="for-checkbox-budget" for="status-{{ each.idx }}">
           <span>{{ each.week }}</span>
