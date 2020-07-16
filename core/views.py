@@ -127,9 +127,6 @@ def run_reports(request):
     except:
         str_url_parameters = ''
 
-    import pdb
-    pdb.set_trace()
-
     if len(str_url_parameters) == 0:
         board_list = []
         sql_select = "SELECT * FROM auth_permission WHERE content_type_id = 13"
@@ -163,9 +160,6 @@ def submitted_updates(request, board_id = '', weeks = 0):
     if(request.GET.get('mybtn')):
         weeks = int(request.GET.get('ddlWeeks')) + 1
         board_id = request.GET.get('ddlBoards')
-
-    import pdb
-    pdb.set_trace()
 
     time_delta = datetime.timedelta(days = (7*weeks))
     some_time_ago = now - time_delta
