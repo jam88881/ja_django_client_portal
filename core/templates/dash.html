@@ -15,16 +15,27 @@
       <div class="card-header">
         <h4 class="card-title">Basic Call to Trello's API</h4>
       </div>
-      {% for each in board_data%}
       <div class="card-body">
-        <div class="alert alert-info">
-          <span>{{each.id}} - {{each.name}}</span>
-        </div>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th style="white-space: nowrap">Card ID</th>
+              <th>Card Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for each in board_data%}
+            <tr>
+              <td>{{ each.id }}</td>
+              <td>{{ each.name }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      {% endfor %}
     </div>
   </div>
-  </div>
+</div>
 
 {% endif%}
 {% endblock content %}

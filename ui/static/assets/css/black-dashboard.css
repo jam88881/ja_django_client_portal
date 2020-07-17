@@ -4772,6 +4772,7 @@ input[type="button"].btn-block {
   align-items: center;
   justify-content: space-between;
   padding: 0.625rem 0.9375rem;
+  background: transparent;
 }
 
 .navbar>.container,
@@ -15776,7 +15777,6 @@ img {
   padding: 10px 30px 10px 15px;
   width: 100%;
   z-index: 1050;
-  background: #1a1e34;
 }
 
 .navbar .photo {
@@ -17827,7 +17827,7 @@ table.tablesorter thead tr .headerSortDown {
 }
 
 .main-panel>.content {
-  padding: 78px 30px 30px 280px;
+  padding: 78px 30px 78px 280px;
   min-height: calc(100vh - 70px);
 }
 

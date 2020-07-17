@@ -7,6 +7,28 @@
     min-height: 100vh;
 }
 
+.main-panel {
+    position: relative;
+    float: right;
+    width: 100%;
+    min-height: 100vh;
+    border-top: 2px solid #5f72e4;
+    -webkit-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -moz-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -o-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -ms-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
+    transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
+}
+
+.white-content .main-panel {
+    background: linear-gradient(to top, #f5f6fa 80%, #5f72e4 20%);
+}
+
+.main-panel>.content {
+    padding: 30px 30px 30px 280px;
+    min-height: calc(100vh - 70px);
+}
+
 
 .sidebar-expanded {
     width: 15vw;
@@ -39,6 +61,18 @@ a[data-toggle="collapse"] {
     transform: translateY(-50%);
 }
 
+
+/* #background {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 15vh;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #5e72e4;
+    z-index: 1;
+} */
 
 /*
     ADDITIONAL DEMO STYLE, NOT IMPORTANT TO MAKE THINGS WORK BUT TO MAKE IT A BIT NICER :)
@@ -108,10 +142,6 @@ ul ul a {
 
 p .login-link {
     color: #007bff;
-}
-
-.nav-tall {
-    min-height: 5vh;
 }
 
 .main-panel>.content {
