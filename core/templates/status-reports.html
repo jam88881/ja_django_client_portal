@@ -17,9 +17,9 @@
         <h1>{{ board_name }}</h1>
         {% for each in status_data%}
         {% if each.idx == '1' %}
-        <input class="checkbox-budget status" type="radio" name="status" id="status-{{ each.idx }}" checked>
+        <input class="checkbox-budget status" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();" checked>
         {% else %}
-        <input class="checkbox-budget status" type="radio" name="status" id="status-{{ each.idx }}" >
+        <input class="checkbox-budget status" type="radio" name="status" id="status-{{ each.idx }}" onclick="showStatus();">
         {% endif %}
         <label class="for-checkbox-budget" for="status-{{ each.idx }}">
           <span>{{ each.week }}</span>
@@ -35,17 +35,29 @@
 <div class="row">
   <div class="card card-profile">
     <div class="card-body">
-      
-      {% for each in status_data%}
+
+    {% for each in status_data%}
       <div id="statusReport-{{each.idx}}" style="display:none" >
         <h2>{{each.report_header}} </h2>
 
-          {%for rep in each.report%}
-            Time spent on {{rep.id}} - {{rep.name}}:    <b>{{rep.hours}}</b><br>
-          {% endfor %}
-        
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <td>Task</th>
+              <th>Hours Spent This Week</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%for rep in each.report%}
+            <tr>
+              <td>{{ rep.id }} - {{ rep.name }}</td>
+              <td class="text-info" style="color: #1d8cf8"><b>{{ rep.hours }}</b></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      {% endfor %}
+    {% endfor %}
     </div>
   </div>
 </div>

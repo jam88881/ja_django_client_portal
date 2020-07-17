@@ -16658,7 +16658,7 @@ hr {
 }
 
 .table>tbody>tr>td {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .table>tbody>tr>td .photo {
@@ -19850,7 +19850,7 @@ Copyright (c) 2015 Daniel Eden
 }
 
 .white-content .table>tbody>tr>td {
-  color: rgba(34, 42, 66, 0.7) !important;
+  color: rgba(34, 42, 66, 0.7);
 }
 
 .white-content .table>thead>tr>th,
