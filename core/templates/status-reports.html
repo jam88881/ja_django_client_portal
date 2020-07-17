@@ -27,6 +27,15 @@
         
         {% endfor %}
       </div>
+      
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="card card-profile">
+    <div class="card-body">
+      
       {% for each in status_data%}
       <div id="statusReport-{{each.idx}}" style="display:none" >
         <h2>{{each.report_header}} </h2>
@@ -40,7 +49,6 @@
     </div>
   </div>
 </div>
-
 {% block javascripts %}
 	<script src="{% static 'custom/js/status.js' %}"></script>
 
