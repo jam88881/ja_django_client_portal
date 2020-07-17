@@ -11,13 +11,13 @@ from django.shortcuts import render
 
 from datetime import timedelta
 from os import path
-from .settings import DATABASES, TRELLO_API_KEY, TRELLO_ACCOUNT_ID, TRELLO_USER_PROFILE_ID, TRELLO_API_TOKEN, TMETRIC_TOKEN
+from .settings import DATABASES, TRELLO_API_KEY, TRELLO_ACCOUNT_ID, TRELLO_USER_PROFILE_ID, TRELLO_API_TOKEN, TMETRIC_TOKEN, DJANGO_BOARD_PERMISSION_GROUP_ID
 
 headers = { "Authorization" : TMETRIC_TOKEN, "Content-Type" : "application/json"}
 
 def dash(request):
     board_data = []
-    for e in request.user.user_permissions.filter(content_type = 13): #13 is trelloaccess
+    for e in request.user.user_permissions.filter(content_type = DJANGO_BOARD_PERMISSION_GROUP_ID): 
         trello_api_url = 'https://api.trello.com/1/boards/' + e.codename + '/cards/?key='+ TRELLO_API_KEY +'&token=' + TRELLO_API_TOKEN
         response = requests.get(trello_api_url)
 
@@ -83,7 +83,7 @@ def status(request):
 
     date_list.reverse()
     date_list_shift_7.reverse()
-    for e in request.user.user_permissions.filter(content_type = 13):
+    for e in request.user.user_permissions.filter(content_type = DJANGO_BOARD_PERMISSION_GROUP_ID):
         board_name = str(e).split('|')[2].replace('_',' ').replace(' Access','')
         for i in range(1,5):
 
@@ -134,7 +134,7 @@ def run_reports(request):
 
     if len(str_url_parameters) == 0:
         board_list = []
-        sql_select = "SELECT * FROM auth_permission WHERE content_type_id = 13"
+        sql_select = "SELECT * FROM auth_permission WHERE content_type_id = " + DJANGO_BOARD_PERMISSION_GROUP_ID
         try:
             conn = get_conn()
             cur = conn.cursor()
