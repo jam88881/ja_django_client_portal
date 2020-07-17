@@ -94,9 +94,14 @@ def status(request):
             else:
                 header = "Status report " + str(date_list_shift_7[i-1])
 
+            if date_list[i-1].strftime("%B") == date_list_shift_7[i-1].strftime("%B"):
+                week_radio_selection = "{0} {1}-{2}".format( date_list[i-1].strftime("%b"), date_list[i-1].strftime("%d") , date_list_shift_7[i-1].strftime("%d") )
+            else:
+                week_radio_selection = "{0} {1}-{2} {3}".format( date_list[i-1].strftime("%b"), date_list[i-1].strftime("%d") , date_list_shift_7[i-1].strftime("%b"), date_list_shift_7[i-1].strftime("%d") )
+
             status_data_item = {
                 "idx" : str(i),
-                "week" : str(date_list[i-1]) + " to " + str(date_list_shift_7[i-1]),
+                "week" : week_radio_selection,
                 "report_header" : header,
                 "report" : get_report_body(e.codename, date_list[i-1], date_list_shift_7[i-1])
             }
