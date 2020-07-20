@@ -14,8 +14,9 @@ urlpatterns = [
     path('status-reports/', views.status),
     path('run-reports/', views.run_reports),
     path('submitted-updates/', views.submitted_updates, name="submitted-updates"),
+    path('page-user/', views.profile, name="page-user"),
     path('admin/', admin.site.urls),
-    path("", include("authentication.urls")),  
-    path("", include("app.urls")), 
+    path("", include("authentication.urls")),
+    path("", include("app.urls")),
     path('accounts/', include("allauth.urls")),
 ]

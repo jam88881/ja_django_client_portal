@@ -13,7 +13,7 @@ from datetime import timedelta
 from os import path
 from .settings import DATABASES, TRELLO_API_KEY, TRELLO_ACCOUNT_ID, TRELLO_USER_PROFILE_ID, TRELLO_API_TOKEN, TMETRIC_TOKEN, DJANGO_BOARD_PERMISSION_GROUP_ID
 
-headers = { "Authorization" : TMETRIC_TOKEN, "Content-Type" : "application/json"}
+headers = { "Authorization" : TMETRIC_TOKEN, "Content-Type" : "application/json" }
 
 def dash(request):
     board_data = []
@@ -155,8 +155,6 @@ def run_reports(request):
         weeks = int(str_url_parameters.split('&')[1])
         return submitted_updates(request, board, weeks)
 
-
-
 def submitted_updates(request, board_id = '', weeks = 0):
     status_data = []
     start_dates_list = []
@@ -292,3 +290,5 @@ def get_board_related_tmetric_entries(board, start_date, end_date):
 
     return board_related_tmetric_entries
 
+def profile(request):
+    return render(request, 'page-user.html')

@@ -8,7 +8,7 @@
 {% block content %}
 
 <div class="row">
-  <div class="col-md-8">
+  <!--<div class="col-md-8">
     <div class="card">
       <div class="card-header">
         <h5 class="title">Edit Profile</h5>
@@ -91,7 +91,7 @@
         <button type="submit" class="btn btn-fill btn-primary">Save</button>
       </div>
     </div>
-  </div>
+  </div>-->
   <div class="col-md-4">
     <div class="card card-user">
       <div class="card-body">
@@ -102,12 +102,14 @@
             <div class="block block-three"></div>
             <div class="block block-four"></div>
             <a href="javascript:void(0)">
-              <img class="avatar" src="/static/assets/img/emilyz.jpg" alt="...">
               <h5 class="title">
                 {{ request.user.username }}
               </h5>
             </a>
             <p class="description">
+              {% if user.is_superuser %}
+              Superuser
+              {% endif %}
               {{ request.user.email }}
             </p>
           </div>
