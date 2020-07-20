@@ -159,28 +159,35 @@ def run_reports(request):
 
 def submitted_updates(request, board_id = '', weeks = 0):
     status_data = []
-    date_list = []
-    date_list_shift_7 = []
+    start_dates_list = []
+    end_dates_list = []
     now = datetime.datetime.now()
     if(request.GET.get('mybtn')):
         weeks = int(request.GET.get('ddlWeeks')) + 1
         board_id = request.GET.get('ddlBoards')
 
+    #restrict this feature to 12 weeks worth of data
+    #this is intended as a safeguard against protracted processing time taking up server resources
+    if weeks > 12:
+        weeks = 12
+
     time_delta = datetime.timedelta(days = (7*weeks))
     some_time_ago = now - time_delta
 
+    #assemble a list of start dates and end dates
+    #each list is weeks + 1 in length
     for i in last_n_sundays(some_time_ago.year, some_time_ago.month, some_time_ago.day, weeks):
-        date_list.append(i)
+        start_dates_list.append(i)
     
     for i in last_n_sundays(some_time_ago.year, some_time_ago.month, some_time_ago.day, weeks, 7):
-        date_list_shift_7.append(i)
+        end_dates_list.append(i)
 
-    date_list.reverse()
-    date_list_shift_7.reverse()
+    start_dates_list.reverse()
+    end_dates_list.reverse()
 
     for i in range(1,weeks):
-        delete_existing_data(board_id, date_list[i-1], date_list_shift_7[i-1])
-        entry_data = get_board_related_tmetric_entries(board_id, date_list[i-1], date_list_shift_7[i-1])
+        delete_existing_data(board_id, start_dates_list[i-1], end_dates_list[i-1])
+        entry_data = get_board_related_tmetric_entries(board_id, start_dates_list[i-1], end_dates_list[i-1])
         for elem in entry_data:
             insert_status_reports_entry(str(elem['report_date']), board_id, str(elem['id']), str(elem['name']), str(elem['hours']), elem['budget'])
 
