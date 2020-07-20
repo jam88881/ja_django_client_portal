@@ -291,4 +291,7 @@ def get_board_related_tmetric_entries(board, start_date, end_date):
     return board_related_tmetric_entries
 
 def profile(request):
-    return render(request, 'page-user.html')
+    info = ''
+    for e in request.user.user_permissions.filter(content_type = DJANGO_BOARD_PERMISSION_GROUP_ID):
+        info = str(e).split('|')[2].replace('_',' ')
+    return render(request, 'page-user.html',{'info':info})

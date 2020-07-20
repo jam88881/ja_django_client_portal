@@ -110,7 +110,8 @@
               {% if user.is_superuser %}
               Superuser
               {% endif %}
-              {{ request.user.email }}
+              <br>{{info}}
+              <br>{{ request.user.email }}
             </p>
           </div>
         </p>

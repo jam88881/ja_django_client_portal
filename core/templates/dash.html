@@ -40,4 +40,17 @@
 {% endif%}
 {% endblock content %}
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+
+<script>
+  //doesn't work, don't know why
+  $(document).ready(function () {
+
+  $('.components > li').ready( function() 
+  {
+      $('dashboard').addClass('active');
+  });
+});
+
+</script>
+{% endblock javascripts %}

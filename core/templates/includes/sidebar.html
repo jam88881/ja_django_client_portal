@@ -11,7 +11,8 @@
     </div>
     <hr>
     <ul class="list-unstyled components">
-        <li class="active">
+        <!--<li class="active">-->
+        <li id="dashboard">
             <a href="/">
                 <div class="d-flex nav-sec">
                     <i class="fas fa-cubes nav-icon" style="color:#5e72e4"></i>
@@ -21,7 +22,8 @@
                 </div>
             </a>
         </li>
-        <li>
+        <!--</li>-->
+        <li id="notifications">
             <a href="/#">
                 <div class="d-flex nav-sec">
                     <i class="fas fa-bell nav-icon" style="color:#fc8b74"></i>
@@ -31,7 +33,7 @@
                 </div>
             </a>
         </li>
-        <li>
+        <li id="status">
             <a href="/status-reports">
                 <div class="d-flex nav-sec">
                     <i class="fas fa-file-invoice nav-icon" style="color:#22d0f0"></i>
@@ -41,7 +43,7 @@
                 </div>
             </a>
         </li>
-        <li>
+        <li id="payments">
             <a href="/#">
                 <div class="d-flex nav-sec">
                     <i class="fas fa-credit-card nav-icon" style="color:#f3a4b5"></i>
@@ -52,7 +54,7 @@
             </a>
         </li>
         {% if user.is_superuser %}
-        <li>
+        <li id="admin">
             <a href="/admin">
                 <div class="d-flex nav-sec">
                     <i class="fas fa-cog nav-icon" style="color:#2dce89"></i>
@@ -62,7 +64,7 @@
                 </div>
             </a>
         </li>
-        <li>
+        <li id="run">
             <a class="nav-text" href="/run-reports">
                 <div class="d-flex nav-sec">
                     <i class="fas fa-list nav-icon" style="color:#7ca50b"></i>
@@ -73,7 +75,7 @@
             </a>
         </li>
         {% endif %}
-        <li>
+        <li id="gdrive">
             <a href="https://drive.google.com/drive/">
                 <div class="d-flex nav-sec">
                     <i class="fab fa-google-drive nav-icon" style="color:#4f7dc4"></i>
