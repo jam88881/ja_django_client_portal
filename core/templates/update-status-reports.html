@@ -27,6 +27,8 @@
 </form>
 {% block javascripts %}
 <script>
+    sidebarDashElem = document.getElementById('dashboard');
+    sidebarDashElem.classList.remove('active');
     sidebarElem = document.getElementById('run');
     sidebarElem.classList.add('active');
 </script>

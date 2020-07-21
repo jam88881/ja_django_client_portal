@@ -64,6 +64,8 @@
 {% block javascripts %}
   <script src="{% static 'custom/js/status.js' %}"></script>
   <script>
+    sidebarDashElem = document.getElementById('dashboard');
+    sidebarDashElem.classList.remove('active');
     sidebarElem = document.getElementById('status');
     sidebarElem.classList.add('active');
   </script>
