@@ -62,7 +62,11 @@
   </div>
 </div>
 {% block javascripts %}
-	<script src="{% static 'custom/js/status.js' %}"></script>
+  <script src="{% static 'custom/js/status.js' %}"></script>
+  <script>
+    sidebarElem = document.getElementById('status');
+    sidebarElem.classList.add('active');
+  </script>
 
 {% endblock javascripts %}
 

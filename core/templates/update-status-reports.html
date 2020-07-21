@@ -26,5 +26,9 @@
     <input type="submit" class="btn" value="Submit" name="mybtn" style="color:white">
 </form>
 {% block javascripts %}
+<script>
+    sidebarElem = document.getElementById('run');
+    sidebarElem.classList.add('active');
+</script>
 {% endblock javascripts %}
 {% endblock content %}

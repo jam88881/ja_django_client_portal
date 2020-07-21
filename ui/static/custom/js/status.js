@@ -1,6 +1,7 @@
 window.onload = function() {
 
-    function showStatus() {
+    function showStatus() 
+    {
         if (document.getElementById('status-1').checked) {
             document.getElementById('statusReport-1').style.display = 'block';
             document.getElementById('statusReport-2').style.display = 'none';
