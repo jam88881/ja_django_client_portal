@@ -45,7 +45,7 @@ def get_conn():
 
 def get_report_body(board, start_date, end_date):
     report_body = []
-    sql_select_sp_get_report_body = """SELECT * FROM status_reports WHERE report_DATE BETWEEN '{0}' AND '{1}' AND trello_board_id = '{2}'""".format(start_date, end_date, board)
+    sql_select_sp_get_report_body = """SELECT * FROM status_report WHERE report_DATE BETWEEN '{0}' AND '{1}' AND trello_board_id = '{2}'""".format(start_date, end_date, board)
     conn = None
     try:
         conn = get_conn()
@@ -110,7 +110,7 @@ def status(request):
     return render(request, 'status-reports.html', {'status_data':status_data, 'board_name':board_name})
 
 def insert_status_reports_entry(report_date, board_id, card_id, card_name, hours, budget):
-    sql_insert = """INSERT INTO status_reports(report_date,trello_board_id,trello_card_id,trello_card_name,tmetric_hours,budget) VALUES (DATE('{0}'), '{1}', '{2}', '{3}', '{4}', '{5}')""".format(str(report_date[0:10]), board_id, card_id, card_name.replace("'",'`'), str(hours), budget)
+    sql_insert = """INSERT INTO scp_status_report(report_date,trello_board_id,trello_card_id,trello_card_name,tmetric_hours,budget) VALUES (DATE('{0}'), '{1}', '{2}', '{3}', '{4}', '{5}')""".format(str(report_date[0:10]), board_id, card_id, card_name.replace("'",'`'), str(hours), budget)
     conn = None
     try:
         conn = get_conn()
@@ -192,7 +192,7 @@ def submitted_updates(request, board_id = '', weeks = 0):
     return HttpResponse('job finished')
 
 def delete_existing_data(board_id, start_date, end_date):
-    sql_delete = "delete from status_reports where trello_board_id = '{0}' and report_date between '{1}' and '{2}'".format(board_id,start_date,end_date)
+    sql_delete = "delete from scp_status_report where trello_board_id = '{0}' and report_date between '{1}' and '{2}'".format(board_id,start_date,end_date)
     try:
         conn = get_conn()
         cur = conn.cursor()
