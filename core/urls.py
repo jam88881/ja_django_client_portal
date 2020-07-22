@@ -3,7 +3,6 @@
 License: MIT
 Copyright (c) 2019 - present AppSeed.us
 """
-
 from django.contrib import admin
 from django.urls import path, include 
 from django.views.generic import TemplateView
@@ -17,6 +16,8 @@ urlpatterns = [
     path('submitted-updates/', views.submitted_updates, name="submitted-updates"),
     path('page-user/', views.profile, name="page-user"),
     path('admin/', admin.site.urls),
+    path('clients/', views.client),
+    path('upload_logo_image/', views.logo_image_upload, name="upload-pic"),
     #path("", include("authentication.urls")),
     #path("", include("app.urls")),
     #path('accounts/', include("allauth.urls")),

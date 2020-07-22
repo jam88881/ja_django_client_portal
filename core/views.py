@@ -295,3 +295,31 @@ def profile(request):
     for e in request.user.user_permissions.filter(content_type = DJANGO_BOARD_PERMISSION_GROUP_ID):
         info = str(e).split('|')[2].replace('_',' ')
     return render(request, 'page-user.html',{'info':info})
+
+def client(request):
+    return render(request, 'manage-clients.html')
+
+def logo_image_upload(request):
+    conn = get_conn()
+    try:
+        logo_image_file = request.FILES['image'].read() 
+
+
+        sql_insert_client = """insert into scp_clients (name, logo_image) VALUES ('{0}', {1})""".format('Sparkfish', logo_image_file )
+
+        conn = None
+        conn = get_conn()
+        cur = conn.cursor()
+
+        
+
+        cur.execute(sql_insert_client)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(str(error))
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+    return HttpResponse(request.FILES['image'].read(), content_type="image/jpeg")
+
