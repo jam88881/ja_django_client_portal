@@ -45,7 +45,7 @@ def get_conn():
 
 def get_report_body(board, start_date, end_date):
     report_body = []
-    sql_select_sp_get_report_body = """SELECT * FROM status_report WHERE report_DATE BETWEEN '{0}' AND '{1}' AND trello_board_id = '{2}'""".format(start_date, end_date, board)
+    sql_select_sp_get_report_body = """SELECT * FROM scp_status_report WHERE report_DATE BETWEEN '{0}' AND '{1}' AND trello_board_id = '{2}'""".format(start_date, end_date, board)
     conn = None
     try:
         conn = get_conn()
