@@ -1,3 +1,4 @@
+import binascii
 import datetime
 import json
 import os
@@ -302,16 +303,20 @@ def client(request):
 def logo_image_upload(request):
     conn = get_conn()
     try:
-        logo_image_file = request.FILES['image'].read() 
+        logo_image_file = request.FILES['image'].read()
+        binascii.hexlify(logo_image_file)
+        str_logo_image_file = binascii.hexlify(logo_image_file).decode("utf-8")
+        
+        import pdb
+        pdb.set_trace()
 
-
-        sql_insert_client = """insert into scp_clients (name, logo_image) VALUES ('{0}', {1})""".format('Sparkfish', logo_image_file )
+        sql_insert_client = """insert into scp_clients (name, logo_img) VALUES ('{0}', '{1}')""".format('Sparkfish', str(binascii.hexlify(logo_image_file)))
 
         conn = None
         conn = get_conn()
         cur = conn.cursor()
 
-        
+        pdb.set_trace()
 
         cur.execute(sql_insert_client)
     except (Exception, psycopg2.DatabaseError) as error:
@@ -320,6 +325,5 @@ def logo_image_upload(request):
         if conn is not None:
             conn.close()
 
-
-    return HttpResponse(request.FILES['image'].read(), content_type="image/jpeg")
+    return HttpResponse(bytes.fromhex(str_logo_image_file), content_type="image/jpeg")
 
