@@ -1,4 +1,12 @@
+{% extends 'layouts/base.html' %}
 
+{% block title %} Page User {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<h2>Add a New Client</h2>
 <form action="{% url 'upload-pic' %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
     Enter Client Name
     <p>
@@ -10,3 +18,8 @@
     </p>
     <input type="submit" value="Submit" />
 </form>
+<h2>Manage Clients</h2>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
